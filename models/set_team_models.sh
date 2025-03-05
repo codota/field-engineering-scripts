@@ -131,7 +131,7 @@ else
   
   if [ "${team_models}" == "null" ]; then
     body=$(jq -cn --arg m ${models[8]} '{"teamChatModels":{"defaultTeam":{"models":[$m]}}}')
-    curl -X PATCH "${url}/organization/settings" -H "Authorization: Bearer ${id_token}" -H "Content-Type: application/json" -d "${body}"
+    curl -s -X PATCH "${url}/organization/settings" -H "Authorization: Bearer ${id_token}" -H "Content-Type: application/json" -d "${body}"
   fi
   
   team_models=$(jq -cn --argjson m ${team_models} '{"teamChatModels":$m}')
