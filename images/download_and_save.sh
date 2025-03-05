@@ -18,15 +18,17 @@ function show_help() {
   exit 0
 }
 
-if [ -z "$(which docker)" ]; then
-  echo -e "\n  Please install Docker - https://docs.docker.com/engine/install/\n"
+function error_handler() {
+  echo -e "\n  ${1}\n"
   exit 1
-elif [ -z "$(which helm)" ]; then
-  echo -e "\n  Please install Helm - https://helm.sh/docs/intro/install/\n"
-  exit 1
-elif [ -z "$(which yq)" ]; then
-  echo -e "\n  Please install yq >= 1.7 - https://github.com/mikefarah/yq\n"
-  exit 1
+}
+
+if ! command -v docker &> /dev/null; then
+  error_handler "Please install Docker - https://docs.docker.com/engine/install/"
+elif ! command -v helm &> /dev/null; then
+  error_handler "Please install Helm - https://helm.sh/docs/intro/install/"
+elif ! command -v jq &> /dev/null; then
+  error_handler "Please install yq >= 1.7 - https://github.com/mikefarah/yq"
 elif [ $# -lt 2 ]; then
   show_help
 fi
@@ -85,21 +87,17 @@ while [ $# -gt 0 ]; do
       shift; shift
       ;;
     * )
-      echo -e "\n  Invalid Parameter:  $1\n"
-      exit
+      error_handler "Invalid Parameter:  $1"
       ;;
   esac
 done
 
 if [ ! -f "${values}" ] && [ ! -f "${list}" ]; then
-  echo -e "\n  Please specify a Helm chart values file or list of images:  --values <file> or --list <file>\n"
-  exit 1
+  error_handler "Please specify a Helm chart values file or list of images:  --values <file> or --list <file>"
 elif [ -n "${attribution_lookup}" ] && [ ! -f "${attribution_values}" ]; then
-  echo -e "\n  Please specify a Helm Chart values file:  --attribution-values <file>\n"
-  exit 1
+  error_handler "Please specify a Helm Chart values file:  --attribution-values <file>"
 elif [ -n "${output}" ] && [ ! -d "${output}" ]; then
-  echo -e "\n  Please specify an output directory:  --output <path>\n"
-  exit 1
+  error_handler "Please specify an output directory:  --output <path>"
 fi
 
 set -e
@@ -219,6 +217,7 @@ for image in ${images_list[@]}; do
       echo "docker rmi ${image}"
     fi
   fi
+  echo
 done
 
 exit 0

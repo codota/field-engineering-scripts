@@ -16,12 +16,15 @@ function show_help() {
   exit 0
 }
 
-if [ -z "$(which helm)" ]; then
-  echo -e "\n  Please install Helm - https://helm.sh/docs/intro/install/\n"
+function error_handler() {
+  echo -e "\n  ${1}\n"
   exit 1
-elif [ -z "$(which yq)" ]; then
-  echo -e "\n  Please install yq >= 1.7 - https://github.com/mikefarah/yq\n"
-  exit 1
+}
+
+if ! command -v helm &> /dev/null; then
+  error_handler "Please install Helm - https://helm.sh/docs/intro/install"
+elif ! command -v yq &> /dev/null; then
+  error_handler "Please install yq >= 1.7 - https://github.com/mikefarah/yq"
 elif [ $# -lt 2 ]; then
   show_help
 fi
@@ -68,18 +71,15 @@ while [ $# -gt 0 ]; do
       shift; shift
       ;;
     * )
-      echo -e "\n  Invalid Parameter:  $1\n"
-      exit
+      error_handler "Invalid Parameter:  $1"
       ;;
   esac
 done
 
 if [ ! -f "${values}" ]; then
-  echo -e "\n  Please specify a Helm Chart values file:  --values <file>\n"
-  exit 1
+  error_handler "Please specify a Helm Chart values file:  --values <file>"
 elif [ -n "${attribution_lookup}" ] && [ ! -f "${attribution_values}" ]; then
-  echo -e "\n  Please specify a Helm Chart values file:  --attribution-values <file>\n"
-  exit 1
+  error_handler "Please specify a Helm Chart values file:  --attribution-values <file>"
 fi
 
 set -e

@@ -21,15 +21,21 @@ function show_help() {
   exit 0
 }
 
-if [ -z "$(which docker)" ]; then
-  echo -e "\n  Please install Docker - https://docs.docker.com/engine/install/\n"
+function display_handler () {
+  echo -e "\n  ${1}\n"
+}
+
+function error_handler() {
+  echo -e "\n  ${1}\n"
   exit 1
-elif [ -z "$(which helm)" ]; then
-  echo -e "\n  Please install Helm - https://helm.sh/docs/intro/install/\n"
-  exit 1
-elif [ -z "$(which yq)" ]; then
-  echo -e "\n  Please install yq >= 1.7 - https://github.com/mikefarah/yq\n"
-  exit 1
+}
+
+if ! command -v docker &> /dev/null; then
+  error_hadler "Please install Docker - https://docs.docker.com/engine/install/"
+elif ! command -v helm &> /dev/null; then
+  error_handler "Please install Helm - https://helm.sh/docs/intro/install/"
+elif ! command -v yq &> /dev/null; then
+  error_handler "Please install yq >= 1.7 - https://github.com/mikefarah/yq"
 elif [ $# -lt 2 ]; then
   show_help
 fi
@@ -96,24 +102,19 @@ while [ $# -gt 0 ]; do
       shift; shift
       ;;
     * )
-      echo -e "\n  Invalid Parameter:  $1\n"
-      exit
+      error_handler "Invalid Parameter  $1"
       ;;
   esac
 done
 
 if [ -z "${registry}" ]; then
-  echo -e "\n  Please specify a registry:  --registry <hostname>\n"
-  exit 1
+  error_handler "Please specify a registry:  --registry <hostname>"
 elif [ ! -f "${values}" ] && [ ! -f "${list}" ]; then
-  echo -e "\n  Please specify a Helm chart values file or list of images:  --values <file> or --list <file>\n"
-  exit 1
+  error_handler "Please specify a Helm chart values file or list of images:  --values <file> or --list <file>"
 elif [ -n "${attribution_lookup}" ] && [ ! -f "${attribution_values}" ]; then
-  echo -e "\n  Please specify a Helm Chart values file:  --attribution-values <file>\n"
-  exit 1
+  error_handler "Please specify a Helm Chart values file:  --attribution-values <file>"
 elif [ -n "${output}" ] && [ ! -d "${output}" ]; then
-  echo -e "\n  Please specify an output directory:  --output <path>\n"
-  exit 1
+  error_handler "Please specify an output directory:  --output <path>"
 fi
 
 set -e
@@ -228,12 +229,12 @@ if [ -n "${ecr}" ]; then
   done
   
   clear
-  echo -e "\n  Please create the following AWS ECR repositories before continuing:\n"
+  display_handler "Please create the following AWS ECR repositories before continuing:"
   for name in ${ecr_repos[@]}; do
     echo -e "    ${name}"
   done
   
-  echo -e "\n  AWS CLI commands:\n"
+  display_handler "AWS CLI commands:"
   for name in ${ecr_repos[@]}; do
     echo -e "    aws ecr create-repository --repository-name ${name}"
   done
@@ -243,6 +244,7 @@ if [ -n "${ecr}" ]; then
   if [ "${continue}" != "y" ] && [ "${continue}" != "yes" ]; then
     exit 0
   fi
+  echo
 fi
 
 for image in ${images_list[@]}; do
@@ -270,6 +272,7 @@ for image in ${images_list[@]}; do
       echo "docker rmi ${image}"
     fi
   fi
+  echo
 done
 
 exit 0
