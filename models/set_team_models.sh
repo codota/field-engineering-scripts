@@ -31,7 +31,7 @@ function getTeamId() {
   local team_name=$2
   local url=$3
   local team_id=$(curl -s "${url}/organization/teams" -H "Accept: application/json" -H "Authorization: Bearer ${id_token}" \
-    | jq -c --arg n ${team_name} '.data[] | {id,name} | select(.name==$n)')
+    | jq -c --arg n "${team_name}" '.data[] | {id,name} | select(.name==$n)')
   echo ${team_id} | jq -r '.id'
 }
 
@@ -117,7 +117,7 @@ fi
 set -e
 
 if [ "${team_name}" != "default" ]; then
-  team_id=$(getTeamId ${id_token} ${team_name} ${url})
+  team_id=$(getTeamId ${id_token} "${team_name}" ${url})
 else
   team_id="defaultTeam"
 fi
