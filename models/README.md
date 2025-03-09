@@ -10,7 +10,7 @@ A script to fetch an ID token with your username and password (does not work for
 
 *Notes:*
 - The Organization ID can be found in your Helm Chart values file.
-- Your password may require escaping for certain special characters ("'`).
+- Your password may require escaping for certain special characters (`\!).
 
 ```
 Usage: get_id_token.sh [required]
@@ -27,8 +27,8 @@ Example:
 
   get_id_token.sh \
     --organization-id ee4b8bd9-1cd4-4c7b-89b0-e1e9a00cf320 \
-    --password password123 \
-    --url https://tabnine.com \
+    --password 'password123' \
+    --url "https://tabnine.com" \
     --username admin@tabnine.com
 ```
 
@@ -67,5 +67,5 @@ Example:
     --id-token eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXV... \
     --model-id 4,5,8 \
     --team-name "Tabnine Team" \
-    --url https://tabnine.com
+    --url "https://tabnine.com"
 ```
