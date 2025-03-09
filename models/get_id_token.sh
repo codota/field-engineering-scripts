@@ -11,7 +11,7 @@ function show_help() {
 }
 
 if [ -z "$(which jq)" ]; then
-  echo -e "\n  Please install jq - https://jqlang.org/download/\n"
+  echo -e "\n  Please install jq >= 1.7 - https://jqlang.org/download/\n"
   exit 1
 elif [ $# -lt 8 ]; then
   show_help
@@ -61,8 +61,9 @@ fi
 
 set -e
 
-curl -s -X POST ${url}/auth/sign-in/username-password \
+curl -s -X POST "${url}/auth/sign-in/username-password" \
   -H "Content-Type: application/json" \
-  -d "{\"organizationId\":\"${organization_id}\",\"password\":\"${password}\",\"username\":\"${username}\"}" | jq -r '.idToken'
+  -d $(jq -cn --arg o "${organization_id}" --arg p "${password}" --arg u "${username}" '{"organizationId": $o, "password": $p, "username": $u}') \
+  | jq -r '.idToken'
 
 exit 0
