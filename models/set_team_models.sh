@@ -1,14 +1,30 @@
 #!/usr/bin/env bash
 
+# 644ab648-a9df-4ffd-875d-ddd67fd2cb8b    Claude 3.5
+# 31df793f-dd67-4cb9-8ba3-21e8d922ecac    Claude 3.5 v2
+# b5ff943b-972a-45e7-9242-a3367c907072    Claude 3.7
+# ab10f730-caa3-46ee-8ab2-81667a46650e    GPT-3.5 Turbo
+# 24bb7462-1e18-4145-a2cb-81c428b72177    GPT-4 Turbo
+# 8661d015-da2c-4d8c-bc44-a570635c560b    GPT-4o
+# ee0de710-8023-4a22-b644-e3afa64997cf    GPT-4o mini
+# d24e7445-9ddf-43e1-bd13-92245b3fe5a8    Llama 3.1 405B
+# 564172fb-5d9d-49ba-b592-d5ac3a70b39e    Llama 3.1 70B
+# e1392fff-9ef8-48cc-baad-9b8a6235696d    Mistral 7B
+# 3556bbc0-0a70-4cf0-bbea-bcae6f9a18e3    Qwen 32B
+# 48bf942b-1914-4506-9cd9-7f0d17dfa104    Tabnine Protected
+
 models=( 
   "644ab648-a9df-4ffd-875d-ddd67fd2cb8b"
   "31df793f-dd67-4cb9-8ba3-21e8d922ecac"
+  "b5ff943b-972a-45e7-9242-a3367c907072"
   "ab10f730-caa3-46ee-8ab2-81667a46650e"
   "24bb7462-1e18-4145-a2cb-81c428b72177"
   "8661d015-da2c-4d8c-bc44-a570635c560b"
+  "ee0de710-8023-4a22-b644-e3afa64997cf"
   "d24e7445-9ddf-43e1-bd13-92245b3fe5a8"
   "564172fb-5d9d-49ba-b592-d5ac3a70b39e"
   "e1392fff-9ef8-48cc-baad-9b8a6235696d"
+  "3556bbc0-0a70-4cf0-bbea-bcae6f9a18e3"
   "48bf942b-1914-4506-9cd9-7f0d17dfa104"
 )
 
@@ -52,13 +68,16 @@ function show_help() {
   echo -e "          -----------------------------"
   echo -e "          Claude 3.5 Sonnet          0"
   echo -e "          Claude 3.5 Sonnet (v2)     1"
-  echo -e "          GPT-3.5 Turbo              2"
-  echo -e "          GPT-4 Turbo                3"
-  echo -e "          GPT-4o                     4"
-  echo -e "          Llama 3.1 405B             5"
-  echo -e "          Llama 3.1 70B              6"
-  echo -e "          Mistral 7B                 7"
-  echo -e "          Tabnine Protected          8\n"
+  echo -e "          Claude 3.7                 2"
+  echo -e "          GPT-3.5 Turbo              3"
+  echo -e "          GPT-4 Turbo                4"
+  echo -e "          GPT-4o                     5"
+  echo -e "          GPT-4o mini                6"
+  echo -e "          Llama 3.1 405B             7"
+  echo -e "          Llama 3.1 70B              8"
+  echo -e "          Mistral 7B                 9"
+  echo -e "          Qwen 32B                   10"
+  echo -e "          Tabnine Protected          11\n"
   echo -e "      --team-name <string>         Team name                       example: Tabnine Team (case sensitive)"
   echo -e "                                                                      note: Use \"default\" for the default team\n"
   echo -e "      --url <string>               Server URL                      example: https://tabnine.com\n"
@@ -130,7 +149,7 @@ else
   team_models=$(getTeamModels ${id_token} ${url})
   
   if [ "${team_models}" == "null" ]; then
-    body=$(jq -cn --arg m ${models[8]} '{"teamChatModels":{"defaultTeam":{"models":[$m]}}}')
+    body=$(jq -cn --arg m ${models[11]} '{"teamChatModels":{"defaultTeam":{"models":[$m]}}}')
     curl -s -X PATCH "${url}/organization/settings" -H "Authorization: Bearer ${id_token}" -H "Content-Type: application/json" -d "${body}"
   fi
   
