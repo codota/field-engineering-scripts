@@ -46,13 +46,16 @@ Usage: set_team_models.sh [required]
         -----------------------------
         Claude 3.5 Sonnet          0
         Claude 3.5 Sonnet (v2)     1
-        GPT-3.5 Turbo              2
-        GPT-4 Turbo                3
-        GPT-4o                     4
-        Llama 3.1 405B             5
-        Llama 3.1 70B              6
-        Mistral 7B                 7
-        Tabnine Protected          8
+        Claude 3.7                 2
+        GPT-3.5 Turbo              3
+        GPT-4 Turbo                4
+        GPT-4o                     5
+        GPT-4o mini                6
+        Llama 3.1 405B             7
+        Llama 3.1 70B              8
+        Mistral 7B                 9
+        Qwen 32B                   10
+        Tabnine Protected          11
 
     --team-name <string>         Team name                       example: Tabnine Team (case sensitive)
                                                                     note: Use "default" for the default team
