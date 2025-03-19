@@ -163,6 +163,7 @@ else
       --set analytics.ScheduledCsvEmailReporting.enabled=true \
       --set attribution.enabled=true \
       --set auth.teamSync.cronjob.enabled=true \
+      --set coaching.enabled=true \
       --set backup.enabled=true \
       --set global.image.baseRepo=public \
       --set global.image.privateRepo=private \
@@ -173,6 +174,7 @@ else
       --set logs-aggregation.enabled=true \
       --set logs-aggregation.extraContainers[0].image=registry.tabnine.com/public/blacklabelops/logrotate:1.3 \
       --set logs-collection.enabled=true \
+      --set nats-io.enabled=true \
       --set nats-io.container.image.registry=registry.tabnine.com/public \
       --set nats-io.natsBox.container.image.registry=registry.tabnine.com/public \
       --set nats-io.promExporter.image.registry=registry.tabnine.com/public \
