@@ -7,7 +7,7 @@ function show_help() {
   echo -e "    Options:"
   echo -e "      --all                                  All container images"
   echo -e "      --attribution-chart <file|path|url>    Helm chart location                     default: oci://registry.tabnine.com/self-hosted/tabnine-attribution-db"
-  echo -e "      --attribution-lookup                   Enable attribution lookup"
+  echo -e "      --attribution-lookup                   Enable local attribution lookup"
   echo -e "      --attribution-values <file>            Helm chart values file                  example: ./values.yaml"
   echo -e "      --chart <file|path|url>                Helm chart location                     default: oci://registry.tabnine.com/self-hosted/tabnine-cloud"
   echo -e "      --cleanup                              Delete downloaded images"
@@ -183,6 +183,7 @@ else
       --set attribution.enabled=true \
       --set auth.teamSync.cronjob.enabled=true \
       --set backup.enabled=true \
+      --set clickhouse.enabled=true \
       --set coaching.enabled=true \
       --set global.image.baseRepo=public \
       --set global.image.privateRepo=private \

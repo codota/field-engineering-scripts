@@ -11,17 +11,17 @@ A script to generate a list of images required for a specific release.
 Usage: generate_image_list.sh [required] [options]
 
   Required:
-    --values <file>                        Helm Chart values file          example: ./values.yaml
+    --values <file>                        Helm Chart values file              example: ./values.yaml
 
   Options:
     --all                                  All container images
-    --attribution-chart <file|path|url>    Helm Chart location             default: oci://registry.tabnine.com/self-hosted/tabnine-attribution-db
-    --attribution-lookup                   Enable attribution lookup
-    --attribution-values <file>            Helm Chart values file          example: ./values.yaml
-    --chart <file|path|url>                Helm Chart location             default: oci://registry.tabnine.com/self-hosted/tabnine-cloud
+    --attribution-chart <file|path|url>    Helm Chart location                 default: oci://registry.tabnine.com/self-hosted/tabnine-attribution-db
+    --attribution-lookup                   Enable local attribution lookup
+    --attribution-values <file>            Helm Chart values file              example: ./values.yaml
+    --chart <file|path|url>                Helm Chart location                 default: oci://registry.tabnine.com/self-hosted/tabnine-cloud
     --external-chat                        External chat models only
-    --output <file>                        Write output to a file          default: ./images.list
-    --version <string>                     Helm Chart version              default: latest
+    --output <file>                        Write output to a file              default: ./images.list
+    --version <string>                     Helm Chart version                  default: latest
 ```
 
 ```
@@ -47,7 +47,7 @@ Usage: download_and_push.sh [required] [options]
   Options:
     --all                                  All container images
     --attribution-chart <file|path|url>    Helm chart location                     default: oci://registry.tabnine.com/self-hosted/tabnine-attribution-db
-    --attribution-lookup                   Enable attribution lookup
+    --attribution-lookup                   Enable local attribution lookup
     --attribution-values <file>            Helm chart values file                  example: ./values.yaml
     --chart <file|path|url>                Helm chart location                     default: oci://registry.tabnine.com/self-hosted/tabnine-cloud
     --cleanup                              Delete downloaded images
@@ -80,17 +80,17 @@ Usage: download_and_save.sh [options]
 
   Options:
     --all                                  All container images
-    --attribution-chart <file|path|url>    Helm chart location             default: oci://registry.tabnine.com/self-hosted/tabnine-attribution-db
-    --attribution-lookup                   Enable attribution lookup
-    --attribution-values <file>            Helm chart values file          example: ./values.yaml
-    --chart <file|path|url>                Helm chart location             default: oci://registry.tabnine.com/self-hosted/tabnine-cloud
+    --attribution-chart <file|path|url>    Helm chart location                 default: oci://registry.tabnine.com/self-hosted/tabnine-attribution-db
+    --attribution-lookup                   Enable local attribution lookup
+    --attribution-values <file>            Helm chart values file              example: ./values.yaml
+    --chart <file|path|url>                Helm chart location                 default: oci://registry.tabnine.com/self-hosted/tabnine-cloud
     --cleanup                              Delete downloaded images
     --dry-run                              Print docker commands
     --external-chat                        External chat models only
-    --list <file>                          List of images                  example: ./images.txt
-    --output <path>                        Write images to specifc path    default: ./
-    --values <file>                        Helm chart values file          example: ./values.yaml
-    --version <string>                     Helm chart version              default: latest
+    --list <file>                          List of images                      example: ./images.txt
+    --output <path>                        Write images to specifc path        default: ./
+    --values <file>                        Helm chart values file              example: ./values.yaml
+    --version <string>                     Helm chart version                  default: latest
 ```
 
 ```
