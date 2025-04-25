@@ -36,7 +36,7 @@ Example:
 A script to set the available chat models on a team-by-team basis.
 
 ```
-Usage: set_team_models.sh [required]
+Usage: set_team_models.sh [required] [optional]
 
   Required:
     --id-token <string>          ID token                        example: eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXV...
@@ -63,6 +63,9 @@ Usage: set_team_models.sh [required]
                                                                     note: Use "default" for the default team
 
     --url <string>               Server URL                      example: https://tabnine.com
+
+  Optional:
+    --reset
 ```
 
 ```
