@@ -65,7 +65,7 @@ function show_help() {
   echo -e "          Name                       ID"
   echo -e "          -----------------------------"
   echo -e "          Claude 3.5 Sonnet          0"
-  echo -e "          Claude 3.7                 1"
+  echo -e "          Claude 3.7 Sonnet          1"
   echo -e "          Gemini 2.0 Flash           2"
   echo -e "          GPT-3.5 Turbo              3"
   echo -e "          GPT-4 Turbo                4"
@@ -86,8 +86,8 @@ function show_help() {
 if [ -z "$(which curl)" ]; then
   echo -e "\n  Please install Helm - https://curl.se/download.html\n"
   exit 1
-elif [ -z "$(which yq)" ]; then
-  echo -e "\n  Please install yq - https://github.com/mikefarah/yq\n"
+if [ -z "$(which jq)" ]; then
+  echo -e "\n  Please install jq >= 1.7 - https://jqlang.org/download/\n"
   exit 1
 elif [ $# -lt 1 ]; then
   show_help
