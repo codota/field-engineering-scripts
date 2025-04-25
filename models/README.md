@@ -65,7 +65,7 @@ Usage: set_team_models.sh [required] [optional]
     --url <string>               Server URL                      example: https://tabnine.com
 
   Optional:
-    --reset
+    --reset                                                      reset team models
 ```
 
 ```
