@@ -3,6 +3,7 @@
 # 644ab648-a9df-4ffd-875d-ddd67fd2cb8b    Claude 3.5 Sonnet
 # b5ff943b-972a-45e7-9242-a3367c907072    Claude 3.7 Sonnet
 # 6e47b0ae-7c50-4d25-9b8b-236ea0f368a3    Gemini 2.0 Flash
+# 1fffc46f-af37-41cb-88e5-b180e753b93f    Gemma 3 27B
 # ab10f730-caa3-46ee-8ab2-81667a46650e    GPT-3.5 Turbo
 # 24bb7462-1e18-4145-a2cb-81c428b72177    GPT-4 Turbo
 # 8661d015-da2c-4d8c-bc44-a570635c560b    GPT-4o
@@ -16,6 +17,7 @@ models=(
   "644ab648-a9df-4ffd-875d-ddd67fd2cb8b"
   "b5ff943b-972a-45e7-9242-a3367c907072"
   "6e47b0ae-7c50-4d25-9b8b-236ea0f368a3"
+  "1fffc46f-af37-41cb-88e5-b180e753b93f"
   "ab10f730-caa3-46ee-8ab2-81667a46650e"
   "24bb7462-1e18-4145-a2cb-81c428b72177"
   "8661d015-da2c-4d8c-bc44-a570635c560b"
@@ -67,16 +69,17 @@ function show_help() {
   echo -e "          Claude 3.5 Sonnet          0"
   echo -e "          Claude 3.7 Sonnet          1"
   echo -e "          Gemini 2.0 Flash           2"
-  echo -e "          GPT-3.5 Turbo              3"
-  echo -e "          GPT-4 Turbo                4"
-  echo -e "          GPT-4o                     5"
-  echo -e "          Llama 3.1 405B             6"
-  echo -e "          Llama 3.1 70B              7"
-  echo -e "          Mistral 7B                 8"
-  echo -e "          Qwen2.5-32B-Instruct       9"
-  echo -e "          Tabnine Protected          10\n"
+  echo -e "          Gemma 3 27B                3"
+  echo -e "          GPT-3.5 Turbo              4"
+  echo -e "          GPT-4 Turbo                5"
+  echo -e "          GPT-4o                     6"
+  echo -e "          Llama 3.1 405B             7"
+  echo -e "          Llama 3.1 70B              8"
+  echo -e "          Mistral 7B                 9"
+  echo -e "          Qwen2.5-32B-Instruct       10"
+  echo -e "          Tabnine Protected          11\n"
   echo -e "      --team-name <string>         Team name                       example: Tabnine Team (case sensitive)"
-  echo -e "                                                                      note: Use \"default\" for the default team\n"
+  echo -e "                                                                            Use \"default\" for the default team\n"
   echo -e "      --url <string>               Server URL                      example: https://tabnine.com\n"
   echo -e "    Optional:"
   echo -e "      --reset                                                      reset team models\n"
@@ -86,7 +89,7 @@ function show_help() {
 if [ -z "$(which curl)" ]; then
   echo -e "\n  Please install Helm - https://curl.se/download.html\n"
   exit 1
-if [ -z "$(which jq)" ]; then
+elif [ -z "$(which jq)" ]; then
   echo -e "\n  Please install jq >= 1.7 - https://jqlang.org/download/\n"
   exit 1
 elif [ $# -lt 1 ]; then
