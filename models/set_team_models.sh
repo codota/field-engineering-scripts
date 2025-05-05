@@ -149,7 +149,7 @@ if [ -z "${reset}" ]; then
   else
     team_id="defaultTeam"
   fi
-
+  
   if [ -z "${team_id}" ]; then
     echo -e "\n  Invalid team name:  ${team_name}\n"
     exit 1
