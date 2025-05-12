@@ -180,6 +180,7 @@ else
       --set nats-io.natsBox.container.image.registry=registry.tabnine.com/public \
       --set nats-io.promExporter.image.registry=registry.tabnine.com/public \
       --set nats-io.reloader.image.registry=registry.tabnine.com/public \
+      --set nonEvictionRedis.enabled=true \
       --set postgresql.enabled=true \
       --set prometheus-blackbox-exporter.global.imageRegistry=registry.tabnine.com/public \
       --set scim.enabled=true \
