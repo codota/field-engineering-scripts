@@ -240,6 +240,7 @@ if [ -n "${ecr}" ]; then
   
   display_handler "AWS CLI commands:"
   for name in ${ecr_repos[@]}; do
+    name=$(echo ${name} | sed -e "s/${registry}\///g")
     echo -e "    aws ecr create-repository --repository-name ${name}"
   done
   echo
