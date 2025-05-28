@@ -127,10 +127,13 @@ if [ -z "${all}" ]; then
   
   sort -o ${output} ${output}
 else
+  profile=$(cat ${values} | yq -r '.chat.profile')
+  profile=${profile#*-}
   helm template tabnine ${chart} \
     --namespace tabnine \
     --set analytics.ScheduledCsvEmailReporting.enabled=true \
     --set apply.enabled=true \
+    --set apply.profile=qwen-${profile} \
     --set attribution.enabled=true \
     --set auth.teamSync.cronjob.enabled=true \
     --set backup.enabled=true \
