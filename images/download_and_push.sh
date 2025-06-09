@@ -177,23 +177,25 @@ else
     images_list=$(cat images.tmp)
     rm -rf images.tmp
   else
-    profile=$(cat ${values} | yq -r '.chat.profile')
-    profile=${profile#*-}
     helm template tabnine ${chart} \
       --namespace tabnine \
       --set analytics.ScheduledCsvEmailReporting.enabled=true \
       --set apply.enabled=true \
-      --set apply.profile=qwen-${profile} \
       --set attribution.enabled=true \
       --set auth.teamSync.cronjob.enabled=true \
       --set backup.enabled=true \
+      --set chat.spec.backend.enabled=true \
       --set clickhouse.enabled=true \
       --set coaching.enabled=true \
+      --set completion.spec.backend.enabled=true \
+      --set completion.spec.frontend.enabled=true \
+      --set completion.spec.newFrontend.enabled=true \
       --set global.image.baseRepo=public \
       --set global.image.privateRepo=private \
       --set global.image.registry=registry.tabnine.com \
       --set global.monitoring.enabled=true \
       --set global.telemetry.enabled=true \
+      --set global.telemetry.fluentd.enabled=true \
       --set indexer.enabled=true \
       --set logs-aggregation.enabled=true \
       --set logs-aggregation.extraContainers[0].image=registry.tabnine.com/public/blacklabelops/logrotate:1.3 \
