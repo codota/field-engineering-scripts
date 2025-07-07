@@ -6,6 +6,7 @@
 # 6e47b0ae-7c50-4d25-9b8b-236ea0f368a3    Gemini 2.0 Flash
 # 6e47b0ae-7c50-4d25-9b8b-236ea0f368a5    Gemini 2.5 Flash
 # 6e47b0ae-7c50-4d25-9b8b-236ea0f368a4    Gemini 2.5 Pro
+# 1fffc46f-af37-41cb-88e5-b180e753b93f    Gemma 3 27B
 # 8661d015-da2c-4d8c-bc44-a570635c560c    GPT-4.1
 # 8661d015-da2c-4d8c-bc44-a570635c560b    GPT-4o
 # d24e7445-9ddf-43e1-bd13-92245b3fe5a8    Llama 3.1 405B
@@ -21,6 +22,7 @@ models=(
   "6e47b0ae-7c50-4d25-9b8b-236ea0f368a3"
   "6e47b0ae-7c50-4d25-9b8b-236ea0f368a5"
   "6e47b0ae-7c50-4d25-9b8b-236ea0f368a4"
+  "1fffc46f-af37-41cb-88e5-b180e753b93f"
   "8661d015-da2c-4d8c-bc44-a570635c560c"
   "8661d015-da2c-4d8c-bc44-a570635c560b"
   "d24e7445-9ddf-43e1-bd13-92245b3fe5a8"
@@ -29,6 +31,11 @@ models=(
   "3556bbc0-0a70-4cf0-bbea-bcae6f9a18e3"
   "48bf942b-1914-4506-9cd9-7f0d17dfa104"
 )
+
+function error_handler() {
+  echo -e "\n  ${1}\n"
+  exit 1
+}
 
 function getModels() {
   local model_id=($(echo ${1} | tr ',' ' '))
@@ -74,13 +81,14 @@ function show_help() {
   echo -e "          Gemini 2.0 Flash           3"
   echo -e "          Gemini 2.5 Flash           4"
   echo -e "          Gemini 2.5 Pro             5"
-  echo -e "          GPT-4.1                    6"
-  echo -e "          GPT-4o                     7"
-  echo -e "          Llama 3.1 405B             8"
-  echo -e "          Llama 3.1 70B              9"
-  echo -e "          Mistral 7B                 10"
-  echo -e "          Qwen2.5-32B-Instruct       11"
-  echo -e "          Tabnine Protected          12\n"
+  echo -e "          Gemma 3 27B                6"
+  echo -e "          GPT-4.1                    7"
+  echo -e "          GPT-4o                     8"
+  echo -e "          Llama 3.1 405B             9"
+  echo -e "          Llama 3.1 70B              10"
+  echo -e "          Mistral 7B                 11"
+  echo -e "          Qwen2.5-32B-Instruct       12"
+  echo -e "          Tabnine Protected          13\n"
   echo -e "      --team-name <string>         Team name                       example: Tabnine Team (case sensitive)"
   echo -e "                                                                            Use \"default\" for the default team\n"
   echo -e "      --url <string>               Server URL                      example: https://tabnine.com\n"
@@ -89,13 +97,11 @@ function show_help() {
   exit 0
 }
 
-if [ -z "$(which curl)" ]; then
-  echo -e "\n  Please install Helm - https://curl.se/download.html\n"
-  exit 1
-elif [ -z "$(which jq)" ]; then
-  echo -e "\n  Please install jq >= 1.7 - https://jqlang.org/download/\n"
-  exit 1
-elif [ $# -lt 1 ]; then
+if ! command -v curl &> /dev/null; then
+  error_handler "Please install curl - https://curl.se/download.html"
+elif ! command -v yq &> /dev/null; then
+  error_handler "Please install yq >= 1.7 - https://github.com/mikefarah/yq"
+elif [ $# -lt 4 ]; then
   show_help
 fi
 
@@ -131,22 +137,21 @@ while [ $# -gt 0 ]; do
   esac
 done
 
-if [ -z "${reset}" ]; then
-  if [ -z "${id_token}" ]; then
-    echo -e "\n  Please specify an id token:  --id-token <string>\n"
-    exit 1
-  elif [ -z "${model_id}" ]; then
-    echo -e "\n  Please specify a model id:  --model-id <string>\n"
-    exit 1
-  elif [ -z "${team_name}" ]; then
-    echo -e "\n  Please specify a team id:  --team-name <string>\n"
-    exit 1
-  fi
-fi
-
 set -e
 
+if [ -z "${id_token}" ]; then
+  error_handler "Please specify an id token:  --id-token <string>"
+elif [ -z "${url}" ]; then
+  error_handler "Please specify a url:  --url <string>"
+fi
+
 if [ -z "${reset}" ]; then
+  if [ -z "${model_id}" ]; then
+    error_handler "Please specify a model id:  --model-id <string>"
+  elif [ -z "${team_name}" ]; then
+    error_handler "Please specify a team id:  --team-name <string>"
+  fi
+  
   if [ "${team_name}" != "default" ]; then
     team_id=$(getTeamId ${id_token} "${team_name}" ${url})
   else
@@ -154,14 +159,13 @@ if [ -z "${reset}" ]; then
   fi
   
   if [ -z "${team_id}" ]; then
-    echo -e "\n  Invalid team name:  ${team_name}\n"
-    exit 1
+    error_handler "Invalid team name:  ${team_name}"
   else
     models=$(getModels ${model_id[@]})
     team_models=$(getTeamModels ${id_token} ${url})
     
     if [ "${team_models}" == "null" ]; then
-      body=$(jq -cn --arg m ${models[12]} '{"teamChatModels":{"defaultTeam":{"models":[$m]}}}')
+      body=$(jq -cn --arg m ${models[6]} '{"teamChatModels":{"defaultTeam":{"models":[$m]}}}')
       curl -s -X PATCH "${url}/organization/settings" -H "Authorization: Bearer ${id_token}" -H "Content-Type: application/json" -d "${body}"
     fi
     
