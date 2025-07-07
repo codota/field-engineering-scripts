@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+function error_handler() {
+  echo -e "\n  ${1}\n"
+  exit 1
+}
+
 function show_help() {
   echo -e "\n  Usage: ${0##*/} [required] [options]\n"
   echo -e "    Required:"
@@ -14,16 +19,11 @@ function show_help() {
   exit 0
 }
 
-function error_handler() {
-  echo -e "\n  ${1}\n"
-  exit 1
-}
-
 if ! command -v helm &> /dev/null; then
-  error_handler "Please install Helm - https://helm.sh/docs/intro/install"
+  error_handler "Please install helm - https://helm.sh/docs/intro/install"
 elif ! command -v yq &> /dev/null; then
   error_handler "Please install yq >= 1.7 - https://github.com/mikefarah/yq"
-elif [ $# -lt 2 ]; then
+elif [ $# -lt 1 ]; then
   show_help
 fi
 

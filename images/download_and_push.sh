@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+function error_handler() {
+  echo -e "\n  ${1}\n"
+  exit 1
+}
+
 function show_help() {
   echo -e "\n  Usage: ${0##*/} [required] [options]\n"
   echo -e "    Required:"
@@ -19,19 +24,10 @@ function show_help() {
   exit 0
 }
 
-function display_handler () {
-  echo -e "\n  ${1}\n"
-}
-
-function error_handler() {
-  echo -e "\n  ${1}\n"
-  exit 1
-}
-
 if ! command -v docker &> /dev/null; then
-  error_hadler "Please install Docker - https://docs.docker.com/engine/install/"
+  error_handler "Please install docker - https://docs.docker.com/engine/install/"
 elif ! command -v helm &> /dev/null; then
-  error_handler "Please install Helm - https://helm.sh/docs/intro/install/"
+  error_handler "Please install helm - https://helm.sh/docs/intro/install/"
 elif ! command -v yq &> /dev/null; then
   error_handler "Please install yq >= 1.7 - https://github.com/mikefarah/yq"
 elif [ $# -lt 2 ]; then
@@ -167,12 +163,14 @@ if [ -n "${ecr}" ]; then
   done
   
   clear
-  display_handler "Please create the following AWS ECR repositories before continuing:"
+  echo -e "\n  Please create the following AWS ECR repositories before continuing:\n"
+  
   for name in ${ecr_repos[@]}; do
     echo -e "    ${name}"
   done
   
-  display_handler "AWS CLI commands:"
+  echo -e "\n  AWS CLI commands:\n"
+  
   for name in ${ecr_repos[@]}; do
     name=$(echo ${name} | sed -e "s/${registry}\///g")
     echo -e "    aws ecr create-repository --repository-name ${name}"

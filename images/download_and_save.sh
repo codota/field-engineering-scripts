@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+function error_handler() {
+  echo -e "\n  ${1}\n"
+  exit 1
+}
+
 function show_help() {
   echo -e "\n  Usage: ${0##*/} [options]\n"
   echo -e "    Options:"
@@ -16,15 +21,10 @@ function show_help() {
   exit 0
 }
 
-function error_handler() {
-  echo -e "\n  ${1}\n"
-  exit 1
-}
-
 if ! command -v docker &> /dev/null; then
-  error_handler "Please install Docker - https://docs.docker.com/engine/install/"
+  error_handler "Please install docker - https://docs.docker.com/engine/install/"
 elif ! command -v helm &> /dev/null; then
-  error_handler "Please install Helm - https://helm.sh/docs/intro/install/"
+  error_handler "Please install helm - https://helm.sh/docs/intro/install/"
 elif ! command -v jq &> /dev/null; then
   error_handler "Please install yq >= 1.7 - https://github.com/mikefarah/yq"
 elif [ $# -lt 2 ]; then
