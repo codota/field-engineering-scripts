@@ -3,14 +3,14 @@
 function show_help() {
   echo -e "\n  Usage: ${0##*/} [required] [options]\n"
   echo -e "    Required:"
-  echo -e "      --values <file>                        Helm Chart values file              example: ./values.yaml\n"
+  echo -e "      --values <file>                        Helm Chart values file      example: ./values.yaml\n"
   echo -e "    Options:"
-  echo -e "      --attribution-chart <file|path|url>    Helm Chart location                 default: oci://registry.tabnine.com/self-hosted/tabnine-attribution-db"
+  echo -e "      --attribution-chart <file|path|url>    Helm Chart location         default: oci://registry.tabnine.com/self-hosted/tabnine-attribution-db"
   echo -e "      --attribution-enabled                  Enable local attribution"
-  echo -e "      --attribution-values <file>            Helm Chart values file              example: ./values.yaml"
-  echo -e "      --chart <file|path|url>                Helm Chart location                 default: oci://registry.tabnine.com/self-hosted/tabnine-cloud"
-  echo -e "      --output <file>                        Write output to a file              default: ./images.list"
-  echo -e "      --version <string>                     Helm Chart version                  default: latest\n"
+  echo -e "      --attribution-values <file>            Helm Chart values file      example: ./values.yaml"
+  echo -e "      --chart <file|path|url>                Helm Chart location         default: oci://registry.tabnine.com/self-hosted/tabnine-cloud"
+  echo -e "      --output <file>                        Write output to a file      default: ./images.list"
+  echo -e "      --version <string>                     Helm Chart version          default: latest\n"
   exit 0
 }
 

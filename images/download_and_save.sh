@@ -3,16 +3,16 @@
 function show_help() {
   echo -e "\n  Usage: ${0##*/} [options]\n"
   echo -e "    Options:"
-  echo -e "      --attribution-chart <file|path|url>    Helm chart location                 default: oci://registry.tabnine.com/self-hosted/tabnine-attribution-db"
+  echo -e "      --attribution-chart <file|path|url>    Helm chart location             default: oci://registry.tabnine.com/self-hosted/tabnine-attribution-db"
   echo -e "      --attribution-enabled                  Enable local attribution"
-  echo -e "      --attribution-values <file>            Helm chart values file              example: ./values.yaml"
-  echo -e "      --chart <file|path|url>                Helm chart location                 default: oci://registry.tabnine.com/self-hosted/tabnine-cloud"
+  echo -e "      --attribution-values <file>            Helm chart values file          example: ./values.yaml"
+  echo -e "      --chart <file|path|url>                Helm chart location             default: oci://registry.tabnine.com/self-hosted/tabnine-cloud"
   echo -e "      --cleanup                              Delete downloaded images"
   echo -e "      --dry-run                              Print docker commands"
-  echo -e "      --list <file>                          List of images                      example: ./images.txt"
-  echo -e "      --output <path>                        Write images to specifc path        default: ./"
-  echo -e "      --values <file>                        Helm chart values file              example: ./values.yaml"
-  echo -e "      --version <string>                     Helm chart version                  default: latest\n"
+  echo -e "      --list <file>                          List of images                  example: ./images.txt"
+  echo -e "      --output <path>                        Write images to specifc path    default: ./"
+  echo -e "      --values <file>                        Helm chart values file          example: ./values.yaml"
+  echo -e "      --version <string>                     Helm chart version              default: latest\n"
   exit 0
 }
 
