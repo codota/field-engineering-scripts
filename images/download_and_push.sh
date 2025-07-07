@@ -5,15 +5,13 @@ function show_help() {
   echo -e "    Required:"
   echo -e "      --registry <string>                    Target registry hostname                example: docker.io\n"
   echo -e "    Options:"
-  echo -e "      --all                                  All container images"
   echo -e "      --attribution-chart <file|path|url>    Helm chart location                     default: oci://registry.tabnine.com/self-hosted/tabnine-attribution-db"
-  echo -e "      --attribution-lookup                   Enable local attribution lookup"
+  echo -e "      --attribution-enabled                  Enable local attribution lookup"
   echo -e "      --attribution-values <file>            Helm chart values file                  example: ./values.yaml"
   echo -e "      --chart <file|path|url>                Helm chart location                     default: oci://registry.tabnine.com/self-hosted/tabnine-cloud"
   echo -e "      --cleanup                              Delete downloaded images"
   echo -e "      --dry-run                              Print docker commands"
   echo -e "      --ecr                                  Print ECR repository names"
-  echo -e "      --external-chat                        External chat models only"
   echo -e "      --list <file>                          List of images"
   echo -e "      --repo <string>                        Target registry repository for --list   default: tabnine"
   echo -e "      --values <file>                        Helm chart values file"
@@ -42,16 +40,12 @@ fi
 
 while [ $# -gt 0 ]; do
   case $1 in
-    --all )
-      all=true
-      shift
-      ;;
     --attribution-chart )
       attribution_chart=${2%/}
       shift; shift
       ;;
-    --attribution-lookup )
-      attribution_lookup=true
+    --attribution-enabled )
+      attribution_enabled=true
       shift;
       ;;
     --attribution-values )
@@ -68,10 +62,6 @@ while [ $# -gt 0 ]; do
       ;;
     --dry-run )
       dry_run=true
-      shift
-      ;;
-    --external-chat )
-      external_chat=true
       shift
       ;;
     --ecr )
@@ -111,7 +101,7 @@ if [ -z "${registry}" ]; then
   error_handler "Please specify a registry:  --registry <hostname>"
 elif [ ! -f "${values}" ] && [ ! -f "${list}" ]; then
   error_handler "Please specify a Helm chart values file or list of images:  --values <file> or --list <file>"
-elif [ -n "${attribution_lookup}" ] && [ ! -f "${attribution_values}" ]; then
+elif [ -n "${attribution_enabled}" ] && [ ! -f "${attribution_values}" ]; then
   error_handler "Please specify a Helm Chart values file:  --attribution-values <file>"
 elif [ -n "${output}" ] && [ ! -d "${output}" ]; then
   error_handler "Please specify an output directory:  --output <path>"
@@ -136,97 +126,35 @@ fi
 if [ -f "${list}" ]; then
   images_list=$(cat ${list})
 else
-  if [ -z "${all}" ]; then
-    helm template tabnine ${chart} \
-      --namespace tabnine \
-      --set global.image.baseRepo=public \
-      --set global.image.privateRepo=private \
-      --set global.image.registry=registry.tabnine.com \
-      --set logs-aggregation.extraContainers[0].image=registry.tabnine.com/public/blacklabelops/logrotate:1.3 \
-      --set nats-io.container.image.registry=registry.tabnine.com/public \
-      --set nats-io.natsBox.container.image.registry=registry.tabnine.com/public \
-      --set nats-io.promExporter.image.registry=registry.tabnine.com/public \
-      --set nats-io.reloader.image.registry=registry.tabnine.com/public \
-      --set prometheus-blackbox-exporter.global.imageRegistry=registry.tabnine.com/public \
-      --skip-tests \
-      --values "${values}" \
-      --version "${version}" | yq --no-doc '.. | .image? | select(.)' | sort -u > images.tmp
-    
-    if [ -n "${attribution_lookup}" ]; then
-      helm template tabnine ${attribution_chart} \
-        --namespace tabnine \
-        --set global.image.baseRepo=public \
-        --set global.image.privateRepo=private \
-        --set global.image.registry=registry.tabnine.com \
-        --skip-tests \
-        --values "${attribution_values}" \
-        --version "${version}" | yq --no-doc '.. | .image? | select(.)' | sort -u >> images.tmp
-    fi
-    
-    if [ -n "${external_chat}" ]; then
-      images=($(cat images.tmp))
-      for i in ${!images[@]}; do
-        if [[ "${images[i]}" != *"chat:"* ]]; then
-          temp+=(${images[i]})
-        fi
-      done
-      printf "%s\n" "${temp[@]}" > images.tmp
-    fi
-    
-    sort -o images.tmp images.tmp
-    images_list=$(cat images.tmp)
-    rm -rf images.tmp
-  else
-    helm template tabnine ${chart} \
-      --namespace tabnine \
-      --set analytics.ScheduledCsvEmailReporting.enabled=true \
-      --set apply.enabled=true \
-      --set attribution.enabled=true \
-      --set auth.teamSync.cronjob.enabled=true \
-      --set backup.enabled=true \
-      --set chat.spec.backend.enabled=true \
-      --set clickhouse.enabled=true \
-      --set coaching.enabled=true \
-      --set completion.spec.backend.enabled=true \
-      --set completion.spec.frontend.enabled=true \
-      --set completion.spec.newFrontend.enabled=true \
-      --set global.image.baseRepo=public \
-      --set global.image.privateRepo=private \
-      --set global.image.registry=registry.tabnine.com \
-      --set global.monitoring.enabled=true \
-      --set global.telemetry.enabled=true \
-      --set global.telemetry.fluentd.enabled=true \
-      --set indexer.enabled=true \
-      --set logs-aggregation.enabled=true \
-      --set logs-aggregation.extraContainers[0].image=registry.tabnine.com/public/blacklabelops/logrotate:1.3 \
-      --set logs-collection.enabled=true \
-      --set nats-io.enabled=true \
-      --set nats-io.container.image.registry=registry.tabnine.com/public \
-      --set nats-io.natsBox.container.image.registry=registry.tabnine.com/public \
-      --set nats-io.promExporter.image.registry=registry.tabnine.com/public \
-      --set nats-io.reloader.image.registry=registry.tabnine.com/public \
-      --set nonEvictionRedis.enabled=true \
-      --set postgresql.enabled=true \
-      --set prometheus-blackbox-exporter.global.imageRegistry=registry.tabnine.com/public \
-      --set scim.enabled=true \
-      --set redis.enabled=true \
-      --set reranker.enabled=true \
-      --skip-tests \
-      --values "${values}" \
-      --version "${version}" | yq --no-doc '.. | .image? | select(.)' | sort -u > images.tmp
-    
+  helm template tabnine ${chart} \
+    --namespace tabnine \
+    --set global.image.baseRepo=public \
+    --set global.image.privateRepo=private \
+    --set global.image.registry=registry.tabnine.com \
+    --set logs-aggregation.extraContainers[0].image=registry.tabnine.com/public/blacklabelops/logrotate:1.3 \
+    --set nats-io.container.image.registry=registry.tabnine.com/public \
+    --set nats-io.natsBox.container.image.registry=registry.tabnine.com/public \
+    --set nats-io.promExporter.image.registry=registry.tabnine.com/public \
+    --set nats-io.reloader.image.registry=registry.tabnine.com/public \
+    --set prometheus-blackbox-exporter.global.imageRegistry=registry.tabnine.com/public \
+    --skip-tests \
+    --values "${values}" \
+    --version "${version}" | yq --no-doc '.. | .image? | select(.)' | sort -u > images.tmp
+  
+  if [ -n "${attribution_enabled}" ]; then
     helm template tabnine ${attribution_chart} \
       --namespace tabnine \
       --set global.image.baseRepo=public \
       --set global.image.privateRepo=private \
       --set global.image.registry=registry.tabnine.com \
       --skip-tests \
+      --values "${attribution_values}" \
       --version "${version}" | yq --no-doc '.. | .image? | select(.)' | sort -u >> images.tmp
-    
-    sort -o images.tmp images.tmp
-    images_list=$(cat images.tmp)
-    rm -rf images.tmp
   fi
+  
+  sort -o images.tmp images.tmp
+  images_list=$(cat images.tmp)
+  rm -rf images.tmp
 fi
 
 if [ -n "${ecr}" ]; then
