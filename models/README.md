@@ -20,17 +20,20 @@ Usage: set_team_models.sh [required] [optional]
         Claude 3.5 Sonnet          0
         Claude 3.7 Sonnet          1
         Claude 4 Sonnet            2
-        Gemini 2.0 Flash           3
-        Gemini 2.5 Flash           4
-        Gemini 2.5 Pro             5
-        Gemma 3 27B                6
-        GPT-4.1                    7
-        GPT-4o                     8
-        Llama 3.1 405B             9
-        Llama 3.1 70B              10
-        Mistral 7B                 11
-        Qwen2.5-32B-Instruct       12
-        Tabnine Protected          13
+        DeepSeek                   3
+        Gemini 2.0 Flash           4
+        Gemini 2.5 Flash           5
+        Gemini 2.5 Pro             6
+        Gemma 3 27B                7
+        GPT-4.1                    8
+        GPT-4o                     9
+        GPT-5                      10
+        Llama 3.1 405B             11
+        Llama 3.1 70B              12
+        Llama 3.3 70B				  13
+        Mistral 7B                 14
+        Qwen                       15
+        Tabnine Protected          16
 
     --team-name <string>         Team name                       example: Tabnine Team (case sensitive)
                                                                           Use "default" for the default team
