@@ -3,6 +3,7 @@
 # 644ab648-a9df-4ffd-875d-ddd67fd2cb8b    Claude 3.5 Sonnet
 # b5ff943b-972a-45e7-9242-a3367c907072    Claude 3.7 Sonnet
 # b5ff943b-972a-45e7-9242-a3367c907073    Claude 4 Sonnet
+# c5ff943b-972a-45e7-9242-a3367c907074    Claude 4.5 Sonnet
 # 3556bbc0-0a70-4cf0-bbea-bcae6f9a18e4    DeepSeek
 # 6e47b0ae-7c50-4d25-9b8b-236ea0f368a3    Gemini 2.0 Flash
 # 6e47b0ae-7c50-4d25-9b8b-236ea0f368a5    Gemini 2.5 Flash
@@ -11,6 +12,7 @@
 # 8661d015-da2c-4d8c-bc44-a570635c560c    GPT-4.1
 # 8661d015-da2c-4d8c-bc44-a570635c560b    GPT-4o
 # 8661d015-da2c-4d8c-bc44-a570635c560d    GPT-5
+# a773a0f9-ed11-4a5c-9f5c-729be13b3023    GPT-OSS
 # d24e7445-9ddf-43e1-bd13-92245b3fe5a8    Llama 3.1 405B
 # 564172fb-5d9d-49ba-b592-d5ac3a70b39e    Llama 3.1 70B
 # 701d243d-5e11-4ba4-9f35-4e7982544262e   Llama 3.3 70B
@@ -22,6 +24,7 @@ models=(
   "644ab648-a9df-4ffd-875d-ddd67fd2cb8b"
   "b5ff943b-972a-45e7-9242-a3367c907072"
   "b5ff943b-972a-45e7-9242-a3367c907073"
+  "c5ff943b-972a-45e7-9242-a3367c907074"
   "3556bbc0-0a70-4cf0-bbea-bcae6f9a18e4"
   "6e47b0ae-7c50-4d25-9b8b-236ea0f368a3"
   "6e47b0ae-7c50-4d25-9b8b-236ea0f368a5"
@@ -30,6 +33,7 @@ models=(
   "8661d015-da2c-4d8c-bc44-a570635c560c"
   "8661d015-da2c-4d8c-bc44-a570635c560b"
   "8661d015-da2c-4d8c-bc44-a570635c560d"
+  "a773a0f9-ed11-4a5c-9f5c-729be13b3023"
   "d24e7445-9ddf-43e1-bd13-92245b3fe5a8"
   "564172fb-5d9d-49ba-b592-d5ac3a70b39e"
   "701d243d-5e11-4ba4-9f35-4e7982544262e"
@@ -84,20 +88,22 @@ function show_help() {
   echo -e "          Claude 3.5 Sonnet          0"
   echo -e "          Claude 3.7 Sonnet          1"
   echo -e "          Claude 4 Sonnet            2"
-  echo -e "          DeepSeek                   3"
-  echo -e "          Gemini 2.0 Flash           4"
-  echo -e "          Gemini 2.5 Flash           5"
-  echo -e "          Gemini 2.5 Pro             6"
-  echo -e "          Gemma 3 27B                7"
-  echo -e "          GPT-4.1                    8"
-  echo -e "          GPT-4o                     9"
-  echo -e "          GPT-5                      10"
-  echo -e "          Llama 3.1 405B             11"
-  echo -e "          Llama 3.1 70B              12"
-  echo -e "          Llama 3.3 70B              13"
-  echo -e "          Mistral 7B                 14"
-  echo -e "          Qwen                       15"
-  echo -e "          Tabnine Protected          16\n"
+  echo -e "          Claude 4.5 Sonnet          3"
+  echo -e "          DeepSeek                   4"
+  echo -e "          Gemini 2.0 Flash           5"
+  echo -e "          Gemini 2.5 Flash           6"
+  echo -e "          Gemini 2.5 Pro             7"
+  echo -e "          Gemma 3 27B                8"
+  echo -e "          GPT-4.1                    9"
+  echo -e "          GPT-4o                     10"
+  echo -e "          GPT-5                      11"
+  echo -e "          GPT-OSS                    12"
+  echo -e "          Llama 3.1 405B             13"
+  echo -e "          Llama 3.1 70B              14"
+  echo -e "          Llama 3.3 70B              15"
+  echo -e "          Mistral 7B                 16"
+  echo -e "          Qwen                       17"
+  echo -e "          Tabnine Protected          18\n"
   echo -e "      --team-name <string>         Team name                       example: Tabnine Team (case sensitive)"
   echo -e "                                                                            Use \"default\" for the default team\n"
   echo -e "      --url <string>               Server URL                      example: https://tabnine.com\n"
@@ -174,7 +180,7 @@ if [ -z "${reset}" ]; then
     team_models=$(getTeamModels ${id_token} ${url})
     
     if [ "${team_models}" == "null" ]; then
-      body=$(jq -cn --arg m ${models[7]} '{"teamChatModels":{"defaultTeam":{"models":[$m]}}}')
+      body=$(jq -cn --arg m ${models[8]} '{"teamChatModels":{"defaultTeam":{"models":[$m]}}}')
       curl -s -X PATCH "${url}/organization/settings" -H "Authorization: Bearer ${id_token}" -H "Content-Type: application/json" -d "${body}"
     fi
     
