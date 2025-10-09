@@ -122,6 +122,7 @@ else
     --set nats-io.promExporter.image.registry=registry.tabnine.com/public \
     --set nats-io.reloader.image.registry=registry.tabnine.com/public \
     --set prometheus-blackbox-exporter.global.imageRegistry=registry.tabnine.com/public \
+    --set qdrant2.image.repository=registry.tabnine.com/public/qdrant/qdrant \
     --skip-tests \
     --values "${values}" \
     --version "${version}" | yq --no-doc '.. | .image? | select(.)' | sort -u > ${output}/images.tmp
