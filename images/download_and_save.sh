@@ -112,15 +112,13 @@ else
     --set global.image.baseRepo=public \
     --set global.image.privateRepo=private \
     --set global.image.registry=registry.tabnine.com \
+    --set clickhouse.image.registry=registry.tabnine.com/public \
+    --set clickhouse.image.repository=bitnami/clickhouse \
     --set inference.nats.container.image.registry=registry.tabnine.com/public \
     --set inference.nats.natsBox.container.image.registry=registry.tabnine.com/public \
     --set inference.nats.promExporter.image.registry=registry.tabnine.com/public \
     --set inference.nats.reloader.image.registry=registry.tabnine.com/public \
     --set logs-aggregation.extraContainers[0].image=registry.tabnine.com/public/blacklabelops/logrotate:1.3 \
-    --set nats-io.container.image.registry=registry.tabnine.com/public \
-    --set nats-io.natsBox.container.image.registry=registry.tabnine.com/public \
-    --set nats-io.promExporter.image.registry=registry.tabnine.com/public \
-    --set nats-io.reloader.image.registry=registry.tabnine.com/public \
     --set prometheus-blackbox-exporter.global.imageRegistry=registry.tabnine.com/public \
     --set qdrant2.image.repository=registry.tabnine.com/public/qdrant/qdrant \
     --skip-tests \
