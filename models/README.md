@@ -26,17 +26,18 @@ Usage: set_team_models.sh [required] [optional]
         Gemini 2.0 Flash           6
         Gemini 2.5 Flash           7
         Gemini 2.5 Pro             8
-        Gemma 3 27B                9
-        GPT-4.1                    10
-        GPT-4o                     11
-        GPT-5                      12
-        GPT-OSS                    13
-        Llama 3.1 405B             14
-        Llama 3.1 70B              15
-        Llama 3.3 70B              16
-        Mistral 7B                 17
-        Qwen                       18
-        Tabnine Protected          19
+        Gemini 3 Pro               9
+        Gemma 3 27B                10
+        GPT-4.1                    11
+        GPT-4o                     12
+        GPT-5                      13
+        GPT-OSS                    14
+        Llama 3.1 405B             15
+        Llama 3.1 70B              16
+        Llama 3.3 70B              17
+        Mistral 7B                 18
+        Qwen                       19
+        Tabnine Protected          20
 
     --team-name <string>         Team name                       example: Tabnine Team (case sensitive)
                                                                           Use "default" for the default team
@@ -52,7 +53,7 @@ Example:
 
   set_team_models.sh \
     --id-token eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXV... \
-    --model-id 4,9,18 \
+    --model-id 4,10,18 \
     --team-name "Tabnine Team" \
     --url "https://tabnine.com"
 ```
