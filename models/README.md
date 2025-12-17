@@ -21,23 +21,27 @@ Usage: set_team_models.sh [required] [optional]
         Claude 3.7 Sonnet          1
         Claude 4 Sonnet            2
         Claude 4.5 Haiku           3
-        Claude 4.5 Sonnet          4
-        DeepSeek                   5
-        Gemini 2.0 Flash           6
-        Gemini 2.5 Flash           7
-        Gemini 2.5 Pro             8
-        Gemini 3 Pro               9
-        Gemma 3 27B                10
-        GPT-4.1                    11
-        GPT-4o                     12
-        GPT-5                      13
-        GPT-OSS                    14
-        Llama 3.1 405B             15
-        Llama 3.1 70B              16
-        Llama 3.3 70B              17
-        Mistral 7B                 18
-        Qwen                       19
-        Tabnine Protected          20
+        Claude 4.5 Opus            4
+        Claude 4.5 Sonnet          5
+        DeepSeek                   6
+        Devstral 24B               7
+        Gemini 2.0 Flash           8
+        Gemini 2.5 Flash           9
+        Gemini 2.5 Pro             10
+        Gemini 3 Pro               11
+        Gemma 3 27B                12
+        GPT-4.1                    13
+        GPT-4o                     14
+        GPT-5                      15
+        GPT-OSS                    16
+        Llama 3.1 405B             17
+        Llama 3.1 70B              18
+        Llama 3.3 70B              19
+        MiniMax M2 230B            20
+        Mistral 7B                 21
+        Qwen                       22
+        Qwen Coder 3 30B           23
+        Tabnine Protected          24
 
     --team-name <string>         Team name                       example: Tabnine Team (case sensitive)
                                                                           Use "default" for the default team
@@ -53,7 +57,7 @@ Example:
 
   set_team_models.sh \
     --id-token eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXV... \
-    --model-id 4,10,18 \
+    --model-id 5,15,22 \
     --team-name "Tabnine Team" \
     --url "https://tabnine.com"
 ```

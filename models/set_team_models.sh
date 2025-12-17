@@ -4,8 +4,10 @@
 # b5ff943b-972a-45e7-9242-a3367c907072    Claude 3.7 Sonnet
 # b5ff943b-972a-45e7-9242-a3367c907073    Claude 4 Sonnet
 # d5ff943b-972a-45e7-9242-a3367c907075    Claude 4.5 Haiku
+# e5ff943b-972a-45e7-9242-a3367c907076    Claude 4.5 Opus
 # c5ff943b-972a-45e7-9242-a3367c907074    Claude 4.5 Sonnet
 # 3556bbc0-0a70-4cf0-bbea-bcae6f9a18e4    DeepSeek
+# f773a0f9-ed11-4a5c-9f5c-729be13b3025    Devstral 24B
 # 6e47b0ae-7c50-4d25-9b8b-236ea0f368a3    Gemini 2.0 Flash
 # 6e47b0ae-7c50-4d25-9b8b-236ea0f368a5    Gemini 2.5 Flash
 # 6e47b0ae-7c50-4d25-9b8b-236ea0f368a4    Gemini 2.5 Pro
@@ -18,8 +20,10 @@
 # d24e7445-9ddf-43e1-bd13-92245b3fe5a8    Llama 3.1 405B
 # 564172fb-5d9d-49ba-b592-d5ac3a70b39e    Llama 3.1 70B
 # 701d243d-5e11-4ba4-9f35-4e7982544262    Llama 3.3 70B
+# f773a0f9-ed11-4a5c-9f5c-729be13b3024    MiniMax M2 230B
 # e1392fff-9ef8-48cc-baad-9b8a6235696d    Mistral 7B
 # 3556bbc0-0a70-4cf0-bbea-bcae6f9a18e3    Qwen
+# e556bbc0-0a70-4cf0-bbea-bcae6f9a18e3    Qwen Coder 3 30B
 # 48bf942b-1914-4506-9cd9-7f0d17dfa104    Tabnine Protected
 
 models=( 
@@ -27,8 +31,10 @@ models=(
   "b5ff943b-972a-45e7-9242-a3367c907072"
   "b5ff943b-972a-45e7-9242-a3367c907073"
   "d5ff943b-972a-45e7-9242-a3367c907075"
+  "e5ff943b-972a-45e7-9242-a3367c907076"
   "c5ff943b-972a-45e7-9242-a3367c907074"
   "3556bbc0-0a70-4cf0-bbea-bcae6f9a18e4"
+  "f773a0f9-ed11-4a5c-9f5c-729be13b3025"
   "6e47b0ae-7c50-4d25-9b8b-236ea0f368a3"
   "6e47b0ae-7c50-4d25-9b8b-236ea0f368a5"
   "6e47b0ae-7c50-4d25-9b8b-236ea0f368a4"
@@ -41,8 +47,10 @@ models=(
   "d24e7445-9ddf-43e1-bd13-92245b3fe5a8"
   "564172fb-5d9d-49ba-b592-d5ac3a70b39e"
   "701d243d-5e11-4ba4-9f35-4e7982544262"
+  "f773a0f9-ed11-4a5c-9f5c-729be13b3024"
   "e1392fff-9ef8-48cc-baad-9b8a6235696d"
   "3556bbc0-0a70-4cf0-bbea-bcae6f9a18e3"
+  "e556bbc0-0a70-4cf0-bbea-bcae6f9a18e3"
   "48bf942b-1914-4506-9cd9-7f0d17dfa104"
 )
 
@@ -93,23 +101,27 @@ function show_help() {
   echo -e "          Claude 3.7 Sonnet          1"
   echo -e "          Claude 4 Sonnet            2"
   echo -e "          Claude 4.5 Haiku           3"
-  echo -e "          Claude 4.5 Sonnet          4"
-  echo -e "          DeepSeek                   5"
-  echo -e "          Gemini 2.0 Flash           6"
-  echo -e "          Gemini 2.5 Flash           7"
-  echo -e "          Gemini 2.5 Pro             8"
-  echo -e "          Gemini 3 Pro               9
-  echo -e "          Gemma 3 27B                10"
-  echo -e "          GPT-4.1                    11"
-  echo -e "          GPT-4o                     12"
-  echo -e "          GPT-5                      13"
-  echo -e "          GPT-OSS                    14"
-  echo -e "          Llama 3.1 405B             15"
-  echo -e "          Llama 3.1 70B              16"
-  echo -e "          Llama 3.3 70B              17"
-  echo -e "          Mistral 7B                 18"
-  echo -e "          Qwen                       19"
-  echo -e "          Tabnine Protected          20\n"
+  echo -e "          Claude 4.5 Opus            4"
+  echo -e "          Claude 4.5 Sonnet          5"
+  echo -e "          DeepSeek                   6"
+  echo -e "          Devstral 24B               7"
+  echo -e "          Gemini 2.0 Flash           8"
+  echo -e "          Gemini 2.5 Flash           9"
+  echo -e "          Gemini 2.5 Pro             10"
+  echo -e "          Gemini 3 Pro               11"
+  echo -e "          Gemma 3 27B                12"
+  echo -e "          GPT-4.1                    13"
+  echo -e "          GPT-4o                     14"
+  echo -e "          GPT-5                      15"
+  echo -e "          GPT-OSS                    16"
+  echo -e "          Llama 3.1 405B             17"
+  echo -e "          Llama 3.1 70B              18"
+  echo -e "          Llama 3.3 70B              19"
+  echo -e "          MiniMax M2 230B            20"
+  echo -e "          Mistral 7B                 21"
+  echo -e "          Qwen                       22"
+  echo -e "          Qwen Coder 3 30B           23"
+  echo -e "          Tabnine Protected          24\n"
   echo -e "      --team-name <string>         Team name                       example: Tabnine Team (case sensitive)"
   echo -e "                                                                            Use \"default\" for the default team\n"
   echo -e "      --url <string>               Server URL                      example: https://tabnine.com\n"
@@ -186,7 +198,7 @@ if [ -z "${reset}" ]; then
     team_models=$(getTeamModels ${id_token} ${url})
     
     if [ "${team_models}" == "null" ]; then
-      body=$(jq -cn --arg m ${models[19]} '{"teamChatModels":{"defaultTeam":{"models":[$m]}}}')
+      body=$(jq -cn --arg m ${models[22]} '{"teamChatModels":{"defaultTeam":{"models":[$m]}}}')
       curl -s -X PATCH "${url}/organization/settings" -H "Authorization: Bearer ${id_token}" -H "Content-Type: application/json" -d "${body}"
     fi
     
