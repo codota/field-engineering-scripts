@@ -18,30 +18,34 @@ Usage: set_team_models.sh [required] [optional]
         Name                       ID
         -----------------------------
         Claude 3.5 Sonnet          0
-        Claude 3.7 Sonnet          1
-        Claude 4 Sonnet            2
-        Claude 4.5 Haiku           3
-        Claude 4.5 Opus            4
-        Claude 4.5 Sonnet          5
-        DeepSeek                   6
-        Devstral 24B               7
-        Gemini 2.0 Flash           8
-        Gemini 2.5 Flash           9
-        Gemini 2.5 Pro             10
-        Gemini 3 Pro               11
-        Gemma 3 27B                12
-        GPT-4.1                    13
-        GPT-4o                     14
-        GPT-5                      15
-        GPT-OSS                    16
-        Llama 3.1 405B             17
-        Llama 3.1 70B              18
-        Llama 3.3 70B              19
-        MiniMax M2 230B            20
-        Mistral 7B                 21
-        Qwen                       22
-        Qwen Coder 3 30B           23
-        Tabnine Protected          24
+        Claude 3.5 Sonnet v2       1
+        Claude 3.7 Sonnet          2
+        Claude 4 Sonnet            3
+        Claude 4.5 Haiku           4
+        Claude 4.5 Opus            5
+        Claude 4.5 Sonnet          6
+        DeepSeek                   7
+        Devstral 24B               8
+        Gemini 2.0 Flash           9
+        Gemini 2.5 Flash           10
+        Gemini 2.5 Pro             11
+        Gemini 3 Pro               12
+        Gemma 3 27B                13
+        GPT-4                      14
+        GPT-4.1                    15
+        GPT-4o                     16
+        GPT-4o mini                17
+        GPT-5                      18
+        GPT-5.2                    19
+        GPT-OSS                    20
+        Llama 3.1 405B             21
+        Llama 3.1 70B              22
+        Llama 3.3 70B              23
+        MiniMax M2 230B            24
+        Mistral 7B                 25
+        Qwen                       26
+        Qwen Coder 3 30B           27
+        Tabnine Protected          28
 
     --team-name <string>         Team name                       example: Tabnine Team (case sensitive)
                                                                           Use "default" for the default team
@@ -57,7 +61,7 @@ Example:
 
   set_team_models.sh \
     --id-token eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXV... \
-    --model-id 5,15,22 \
+    --model-id 6,19,26 \
     --team-name "Tabnine Team" \
     --url "https://tabnine.com"
 ```
