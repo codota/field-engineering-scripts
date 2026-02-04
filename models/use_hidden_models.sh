@@ -56,7 +56,7 @@ function show_help() {
   echo -e "          MiniMax M2 230B            3\n"
   echo -e "      --url <string>               Server URL                      example: https://tabnine.com\n"
   echo -e "    Optional:"
-  echo -e "      --reset                                                      reset hidden models\n"
+  echo -e "      --reset                      Reset hidden models\n"
   exit 0
 }
 

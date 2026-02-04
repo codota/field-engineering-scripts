@@ -48,12 +48,12 @@ Usage: set_team_models.sh [required] [optional]
         Tabnine Protected          28
 
     --team-name <string>         Team name                       example: Tabnine Team (case sensitive)
-                                                                          Use "default" for the default team
+                                                                 Use "default" for the default team
 
     --url <string>               Server URL                      example: https://tabnine.com
 
   Optional:
-    --reset                                                      reset team models```
+    --reset                      Reset team models
 ```
 
 ```
@@ -86,7 +86,7 @@ Usage: use_hidden_models.sh [required] [optional]
     --url <string>               Server URL                      example: https://tabnine.com
 
   Optional:
-    --reset                                                      reset hidden models
+    --reset                      Reset hidden models
 ```
 
 ```

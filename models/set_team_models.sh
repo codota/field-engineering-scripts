@@ -138,7 +138,7 @@ function show_help() {
   echo -e "                                                                            Use \"default\" for the default team\n"
   echo -e "      --url <string>               Server URL                      example: https://tabnine.com\n"
   echo -e "    Optional:"
-  echo -e "      --reset                                                      reset team models\n"
+  echo -e "      --reset                      Reset team models\n"
   exit 0
 }
 
