@@ -65,3 +65,35 @@ Example:
     --team-name "Tabnine Team" \
     --url "https://tabnine.com"
 ```
+
+#### use\_hidden\_models.sh
+A script to enable models that are hidden by default.
+
+```
+Usage: use_hidden_models.sh [required] [optional]
+
+  Required:
+    --id-token <string>          ID token                        example: eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXV...
+    --model-id <string>          Model IDs, comma separated      example: 1,2,3
+
+        Name                       ID
+        -----------------------------
+        Claude 4.5 Opus            0
+        DeepSeek                   1
+        Devstral 24B               2
+        MiniMax M2 230B            3
+
+    --url <string>               Server URL                      example: https://tabnine.com
+
+  Optional:
+    --reset                                                      reset hidden models
+```
+
+```
+Example:
+
+  use_hidden_models \
+    --id-token eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXV... \
+    --model-id 0,2 \
+    --url "https://tabnine.com"
+```
