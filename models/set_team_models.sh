@@ -146,7 +146,7 @@ if ! command -v curl &> /dev/null; then
   error_handler "Please install curl - https://curl.se/download.html"
 elif ! command -v yq &> /dev/null; then
   error_handler "Please install yq >= 1.7 - https://github.com/mikefarah/yq"
-elif [ $# -lt 4 ]; then
+elif [ $# -lt 1 ]; then
   show_help
 fi
 
@@ -206,16 +206,15 @@ if [ -z "${reset}" ]; then
   if [ -z "${team_id}" ]; then
     error_handler "Invalid team name:  ${team_name}"
   else
-    models=$(getModels ${model_id[@]})
+    model_uuids=$(getModels ${model_id[@]})
     team_models=$(getTeamModels ${id_token} ${url})
     
-    if [ "${team_models}" == "null" ]; then
-      body=$(jq -cn --arg m ${models[26]} '{"teamChatModels":{"defaultTeam":{"models":[$m]}}}')
-      curl -s -X PATCH "${url}/organization/settings" -H "Authorization: Bearer ${id_token}" -H "Content-Type: application/json" -d "${body}"
+    if [ "${team_models}" == "null" ] && [ "${team_id}" != "defaultTeam" ]; then
+      error_handler "Please set the default model(s) first:  --team-name default"
     fi
     
     team_models=$(jq -cn --argjson m ${team_models} '{"teamChatModels":$m}')
-    body=$(echo ${team_models} | jq -c --arg i ${team_id} --argjson m ${models} '.teamChatModels += {$i:{"models":$m}}')
+    body=$(echo ${team_models} | jq -c --arg i ${team_id} --argjson m ${model_uuids} '.teamChatModels += {$i:{"models":$m}}')
     curl -s -X PATCH "${url}/organization/settings" -H "Authorization: Bearer ${id_token}" -H "Content-Type: application/json" -d "${body}" \
       | jq '.settings.teamChatModels'
   fi
