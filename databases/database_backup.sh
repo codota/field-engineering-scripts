@@ -1,11 +1,36 @@
 #!/usr/bin/env bash
 
 # Parse command line arguments
-# Usage: ./database_backup.sh [namespace]
+# Usage: ./database_backup.sh [namespace] [release_name]
 # Default namespace: tabnine
+# Default release name: tabnine
 namespace="${1:-tabnine}"
+release="${2:-tabnine}"
+
+# If no arguments were provided, show defaults and ask for confirmation
+if [ $# -eq 0 ]; then
+    echo "============================================"
+    echo "  No arguments provided — using defaults"
+    echo "============================================"
+    echo ""
+    echo "  Namespace:    ${namespace}"
+    echo "  Helm Release: ${release}"
+    echo ""
+    echo "  Usage: $0 <namespace> <release_name>"
+    echo "  Example: $0 tabnine tabnine"
+    echo "           $0 my-namespace my-release"
+    echo ""
+    echo "============================================"
+    read -rp "Proceed with defaults? (y/N): " confirm
+    if [[ ! "${confirm}" =~ ^[Yy]$ ]]; then
+        echo "Aborted."
+        exit 0
+    fi
+    echo ""
+fi
 
 echo "Using namespace: ${namespace}"
+echo "Using Helm release: ${release}"
 echo ""
 
 # Check if kubectl exists, otherwise use sudo microk8s kubectl
@@ -15,9 +40,10 @@ else
     kubectl_cmd="sudo microk8s kubectl"
 fi
 
-postgres_pod=tabnine-postgresql-0
-redis_pod=tabnine-redis-master-0
-redis_no_evict_pod=tabnine-no-evict-redis-master-0
+# Derive resource names from release name
+postgres_pod="${release}-postgresql-0"
+redis_pod="${release}-redis-master-0"
+redis_no_evict_pod="${release}-no-evict-redis-master-0"
 
 # Function to handle errors
 handle_error() {
@@ -29,7 +55,12 @@ handle_error() {
 echo "Starting PostgreSQL backup..."
 
 # Scale down deployments if they exist
-deployments=("tabnine-tabnine-cloud-auth" "tabnine-tabnine-cloud-analytics" "tabnine-tabnine-cloud-analytics-consumer" "tabnine-tabnine-cloud-indexer")
+deployments=(
+    "${release}-tabnine-cloud-auth"
+    "${release}-tabnine-cloud-analytics"
+    "${release}-tabnine-cloud-analytics-consumer"
+    "${release}-tabnine-cloud-indexer"
+)
 scaled_deployments=()
 
 for deployment in "${deployments[@]}"; do
@@ -45,7 +76,7 @@ done
 echo "Checking for active database connections..."
 
 # Get database password once to avoid repeated calls
-db_password=$(${kubectl_cmd} get secrets -n ${namespace} tabnine-database -o yaml | yq -r '.data.password' | base64 -d)
+db_password=$(${kubectl_cmd} get secrets -n ${namespace} ${release}-database -o yaml | yq -r '.data.password' | base64 -d)
 
 # Simple check for active connections - no interactive terminal needed
 active_connections=$(${kubectl_cmd} exec -n ${namespace} ${postgres_pod} -- /bin/sh -c "PGPASSWORD=${db_password} psql -h localhost -U tabnine -d tabnine -t -c \"SELECT count(*) FROM pg_stat_activity WHERE datname = 'tabnine' AND pid <> pg_backend_pid() AND state = 'active';\"" | tr -d ' ')
@@ -104,7 +135,7 @@ done
 # Redis Master Backup
 echo "Starting Redis backup..."
 # Get Redis password
-redis_password=$(${kubectl_cmd} get secrets -n ${namespace} tabnine-redis -o yaml | yq -r '.data.redis-password' | base64 -d)
+redis_password=$(${kubectl_cmd} get secrets -n ${namespace} ${release}-redis -o yaml | yq -r '.data.redis-password' | base64 -d)
 ${kubectl_cmd} exec -n ${namespace} ${redis_pod} -- /bin/sh -c "REDISCLI_AUTH=${redis_password} redis-cli -h localhost SAVE" > /dev/null 2>&1 || handle_error "Failed to save Redis database"
 ${kubectl_cmd} cp -n ${namespace} ${redis_pod}:/data/dump.rdb ./redis.rdb > /dev/null 2>&1 || handle_error "Failed to copy Redis dump file"
 ${kubectl_cmd} exec -n ${namespace} ${redis_pod} -- /bin/sh -c "rm -rf /data/dump.rdb" > /dev/null 2>&1 || handle_error "Failed to remove temporary Redis dump file"
@@ -112,8 +143,8 @@ ${kubectl_cmd} exec -n ${namespace} ${redis_pod} -- /bin/sh -c "rm -rf /data/dum
 # Non-Evicting Redis Master Backup
 echo "Starting Non-Evicting Redis backup..."
 # Get Redis password
-redis_password=$(${kubectl_cmd} get secrets -n ${namespace} tabnine-non-eviction-redis -o yaml | yq -r '.data.redis-password' | base64 -d)
-${kubectl_cmd} exec -n ${namespace} ${redis_no_evict_pod} -- /bin/sh -c "REDISCLI_AUTH=${redis_password} redis-cli -h localhost SAVE" > /dev/null 2>&1 || handle_error "Failed to save Redis database"
+redis_no_evict_password=$(${kubectl_cmd} get secrets -n ${namespace} ${release}-non-eviction-redis -o yaml | yq -r '.data.redis-password' | base64 -d)
+${kubectl_cmd} exec -n ${namespace} ${redis_no_evict_pod} -- /bin/sh -c "REDISCLI_AUTH=${redis_no_evict_password} redis-cli -h localhost SAVE" > /dev/null 2>&1 || handle_error "Failed to save Redis database"
 ${kubectl_cmd} cp -n ${namespace} ${redis_no_evict_pod}:/data/dump.rdb ./redis-no-evict.rdb > /dev/null 2>&1 || handle_error "Failed to copy Redis dump file"
 ${kubectl_cmd} exec -n ${namespace} ${redis_no_evict_pod} -- /bin/sh -c "rm -rf /data/dump.rdb" > /dev/null 2>&1 || handle_error "Failed to remove temporary Redis dump file"
 
