@@ -62,8 +62,8 @@ function show_help() {
 
 if ! command -v curl &> /dev/null; then
   error_handler "Please install curl - https://curl.se/download.html"
-elif ! command -v yq &> /dev/null; then
-  error_handler "Please install yq >= 1.7 - https://github.com/mikefarah/yq"
+elif ! command -v jq &> /dev/null; then
+  error_handler "Please install yq >= 1.7 - https://jqlang.org/download/"
 elif [ $# -lt 1 ]; then
   show_help
 fi
