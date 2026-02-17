@@ -35,14 +35,6 @@ function getModels() {
   echo "${model_uuid[@]}"
 }
 
-function getTeamModels() {
-  local id_token=$1
-  local url=$2
-  local team_models=$(curl -s "${url}/organization/settings" -H "Accept: application/json" -H "Authorization: Bearer ${id_token}" \
-    | jq -c '.settings.teamChatModels')
-  echo ${team_models}
-}
-
 function show_help() {
   echo -e "\n  Usage: ${0##*/} [required] [optional]\n"
   echo -e "    Required:"
@@ -63,7 +55,7 @@ function show_help() {
 if ! command -v curl &> /dev/null; then
   error_handler "Please install curl - https://curl.se/download.html"
 elif ! command -v jq &> /dev/null; then
-  error_handler "Please install yq >= 1.7 - https://jqlang.org/download/"
+  error_handler "Please install jq >= 1.7 - https://jqlang.org/download/"
 elif [ $# -lt 1 ]; then
   show_help
 fi
