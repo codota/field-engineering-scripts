@@ -7,6 +7,9 @@
 # d5ff943b-972a-45e7-9242-a3367c907075    Claude 4.5 Haiku
 # e5ff943b-972a-45e7-9242-a3367c907076    Claude 4.5 Opus
 # c5ff943b-972a-45e7-9242-a3367c907074    Claude 4.5 Sonnet
+# f5ff943b-972a-45e7-9242-a3367c907077    Claude 4.6 Opus
+# d5ff943b-972a-45e7-9242-a3367c907078    Claude 4.6 Sonnet
+# e1392fff-9ef8-48cc-baad-9b8a6235696f    Codestral
 # 3556bbc0-0a70-4cf0-bbea-bcae6f9a18e4    DeepSeek
 # f773a0f9-ed11-4a5c-9f5c-729be13b3025    Devstral 24B
 # 6e47b0ae-7c50-4d25-9b8b-236ea0f368a3    Gemini 2.0 Flash
@@ -14,17 +17,22 @@
 # 6e47b0ae-7c50-4d25-9b8b-236ea0f368a4    Gemini 2.5 Pro
 # d7078896-bbaa-485e-87db-0c37f1631f6e    Gemini 3 Pro
 # 1fffc46f-af37-41cb-88e5-b180e753b93f    Gemma 3 27B
+# a773a0f9-ed11-4a5c-9f5c-729be13b3029    GLM 4.7
 # 24bb7462-1e18-4145-a2cb-81c428b72177    GPT-4
 # 8661d015-da2c-4d8c-bc44-a570635c560c    GPT-4.1
 # 8661d015-da2c-4d8c-bc44-a570635c560b    GPT-4o
 # ee0de710-8023-4a22-b644-e3afa64997cf    GPT-4o mini
 # 8661d015-da2c-4d8c-bc44-a570635c560d    GPT-5
 # 01a524ea-36d3-4ebd-a78a-ff5ed37b1530    GPT-5.2
+# 01a524ea-36d3-4ebd-a78a-ff5ed37b1531    GPT-5.2 Codex
+# 01a524ea-36d3-4ebd-a78a-ff5ed37b1532    GPT-5.3 Codex
 # a773a0f9-ed11-4a5c-9f5c-729be13b3023    GPT-OSS
 # d24e7445-9ddf-43e1-bd13-92245b3fe5a8    Llama 3.1 405B
 # 564172fb-5d9d-49ba-b592-d5ac3a70b39e    Llama 3.1 70B
 # 701d243d-5e11-4ba4-9f35-4e7982544262    Llama 3.3 70B
+# f773a0f9-ed11-4a5c-9f5c-729be13b3028    MiniMax 2.5
 # f773a0f9-ed11-4a5c-9f5c-729be13b3024    MiniMax M2 230B
+# e1392fff-9ef8-48cc-baad-9b8a6235696e    Mistral
 # e1392fff-9ef8-48cc-baad-9b8a6235696d    Mistral 7B
 # 3556bbc0-0a70-4cf0-bbea-bcae6f9a18e3    Qwen
 # e556bbc0-0a70-4cf0-bbea-bcae6f9a18e3    Qwen Coder 3 30B
@@ -38,6 +46,9 @@ models=(
   "d5ff943b-972a-45e7-9242-a3367c907075"
   "e5ff943b-972a-45e7-9242-a3367c907076"
   "c5ff943b-972a-45e7-9242-a3367c907074"
+  "f5ff943b-972a-45e7-9242-a3367c907077"
+  "d5ff943b-972a-45e7-9242-a3367c907078"
+  "e1392fff-9ef8-48cc-baad-9b8a6235696f"
   "3556bbc0-0a70-4cf0-bbea-bcae6f9a18e4"
   "f773a0f9-ed11-4a5c-9f5c-729be13b3025"
   "6e47b0ae-7c50-4d25-9b8b-236ea0f368a3"
@@ -45,17 +56,22 @@ models=(
   "6e47b0ae-7c50-4d25-9b8b-236ea0f368a4"
   "d7078896-bbaa-485e-87db-0c37f1631f6e"
   "1fffc46f-af37-41cb-88e5-b180e753b93f"
+  "a773a0f9-ed11-4a5c-9f5c-729be13b3029"
   "24bb7462-1e18-4145-a2cb-81c428b72177"
   "8661d015-da2c-4d8c-bc44-a570635c560c"
   "8661d015-da2c-4d8c-bc44-a570635c560b"
   "ee0de710-8023-4a22-b644-e3afa64997cf"
   "8661d015-da2c-4d8c-bc44-a570635c560d"
   "01a524ea-36d3-4ebd-a78a-ff5ed37b1530"
+  "01a524ea-36d3-4ebd-a78a-ff5ed37b1531"
+  "01a524ea-36d3-4ebd-a78a-ff5ed37b1532"
   "a773a0f9-ed11-4a5c-9f5c-729be13b3023"
   "d24e7445-9ddf-43e1-bd13-92245b3fe5a8"
   "564172fb-5d9d-49ba-b592-d5ac3a70b39e"
   "701d243d-5e11-4ba4-9f35-4e7982544262"
+  "f773a0f9-ed11-4a5c-9f5c-729be13b3028"
   "f773a0f9-ed11-4a5c-9f5c-729be13b3024"
+  "e1392fff-9ef8-48cc-baad-9b8a6235696e"
   "e1392fff-9ef8-48cc-baad-9b8a6235696d"
   "3556bbc0-0a70-4cf0-bbea-bcae6f9a18e3"
   "e556bbc0-0a70-4cf0-bbea-bcae6f9a18e3"
@@ -82,18 +98,18 @@ function getModels() {
 }
 
 function getTeamId() {
-  local id_token=$1
+  local token=$1
   local team_name=$2
   local url=$3
-  local team_id=$(curl -s "${url}/organization/teams" -H "Accept: application/json" -H "Authorization: Bearer ${id_token}" \
+  local team_id=$(curl -s "${url}/organization/teams" -H "Accept: application/json" -H "Authorization: Bearer ${token}" \
     | jq -c --arg n "${team_name}" '.data[] | {id,name} | select(.name==$n)')
   echo ${team_id} | jq -r '.id'
 }
 
 function getTeamModels() {
-  local id_token=$1
+  local token=$1
   local url=$2
-  local team_models=$(curl -s "${url}/organization/settings" -H "Accept: application/json" -H "Authorization: Bearer ${id_token}" \
+  local team_models=$(curl -s "${url}/organization/settings" -H "Accept: application/json" -H "Authorization: Bearer ${token}" \
     | jq -c '.settings.teamChatModels')
   echo ${team_models}
 }
@@ -101,7 +117,6 @@ function getTeamModels() {
 function show_help() {
   echo -e "\n  Usage: ${0##*/} [required] [optional]\n"
   echo -e "    Required:"
-  echo -e "      --id-token <string>          ID token                        example: eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXV..."
   echo -e "      --model-id <string>          Model IDs, comma separated      example: 1,2,3\n"
   echo -e "          Name                       ID"
   echo -e "          -----------------------------"
@@ -136,6 +151,7 @@ function show_help() {
   echo -e "          Tabnine Protected          28\n"
   echo -e "      --team-name <string>         Team name                       example: Tabnine Team (case sensitive)"
   echo -e "                                                                            Use \"default\" for the default team\n"
+  echo -e "      --token <string>             Token                           example: t9u_tkvKUciAHfULXhfdDKBBUNvWt5g..."
   echo -e "      --url <string>               Server URL                      example: https://tabnine.com\n"
   echo -e "    Optional:"
   echo -e "      --reset                      Reset team models\n"
@@ -155,10 +171,6 @@ while [ $# -gt 0 ]; do
     --help )
       show_help
       ;;
-    --id-token )
-      id_token=$2
-      shift; shift
-      ;;
     --model-id )
       model_id=$2
       shift; shift
@@ -169,6 +181,10 @@ while [ $# -gt 0 ]; do
       ;;
     --team-name )
       team_name=$2
+      shift; shift
+      ;;
+    --token )
+      token=$2
       shift; shift
       ;;
     --url )
@@ -184,8 +200,8 @@ done
 
 set -e
 
-if [ -z "${id_token}" ]; then
-  error_handler "Please specify an id token:  --id-token <string>"
+if [ -z "${token}" ]; then
+  error_handler "Please specify a token:  --token <string>"
 elif [ -z "${url}" ]; then
   error_handler "Please specify a url:  --url <string>"
 fi
@@ -198,7 +214,7 @@ if [ -z "${reset}" ]; then
   fi
   
   if [ "${team_name}" != "default" ]; then
-    team_id=$(getTeamId ${id_token} "${team_name}" ${url})
+    team_id=$(getTeamId ${token} "${team_name}" ${url})
   else
     team_id="defaultTeam"
   fi
@@ -207,7 +223,7 @@ if [ -z "${reset}" ]; then
     error_handler "Invalid team name:  ${team_name}"
   else
     model_uuids=$(getModels ${model_id[@]})
-    team_models=$(getTeamModels ${id_token} ${url})
+    team_models=$(getTeamModels ${token} ${url})
     
     if [ "${team_models}" == "null" ] && [ "${team_id}" != "defaultTeam" ]; then
       error_handler "Please set the default model(s) first:  --team-name default"
@@ -215,12 +231,12 @@ if [ -z "${reset}" ]; then
     
     team_models=$(jq -cn --argjson m ${team_models} '{"teamChatModels":$m}')
     body=$(echo ${team_models} | jq -c --arg i ${team_id} --argjson m ${model_uuids} '.teamChatModels += {$i:{"models":$m}}')
-    curl -s -X PATCH "${url}/organization/settings" -H "Authorization: Bearer ${id_token}" -H "Content-Type: application/json" -d "${body}" \
+    curl -s -X PATCH "${url}/organization/settings" -H "Authorization: Bearer ${token}" -H "Content-Type: application/json" -d "${body}" \
       | jq '.settings.teamChatModels'
   fi
 else
-  curl -s -X DELETE "${url}/organization/settings/teamChatModels" -H "Authorization: Bearer ${id_token}"
-  curl -s "${url}/organization/settings" -H "Authorization: Bearer ${id_token}" | jq '.settings.teamChatModels'
+  curl -s -X DELETE "${url}/organization/settings/teamChatModels" -H "Authorization: Bearer ${token}"
+  curl -s "${url}/organization/settings" -H "Authorization: Bearer ${token}" | jq '.settings.teamChatModels'
 fi
 
 exit 0

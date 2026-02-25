@@ -38,7 +38,6 @@ function getModels() {
 function show_help() {
   echo -e "\n  Usage: ${0##*/} [required] [optional]\n"
   echo -e "    Required:"
-  echo -e "      --id-token <string>          ID token                        example: eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXV..."
   echo -e "      --model-id <string>          Model IDs, comma separated      example: 1,2,3\n"
   echo -e "          Name                       ID"
   echo -e "          -----------------------------"
@@ -46,6 +45,7 @@ function show_help() {
   echo -e "          DeepSeek                   1"
   echo -e "          Devstral 24B               2"
   echo -e "          MiniMax M2 230B            3\n"
+  echo -e "      --token <string>             Token                           example: t9u_tkvKUciAHfULXhfdDKBBUNvWt5g..."
   echo -e "      --url <string>               Server URL                      example: https://tabnine.com\n"
   echo -e "    Optional:"
   echo -e "      --reset                      Reset hidden models\n"
@@ -65,10 +65,6 @@ while [ $# -gt 0 ]; do
     --help )
       show_help
       ;;
-    --id-token )
-      id_token=$2
-      shift; shift
-      ;;
     --model-id )
       model_id=$2
       shift; shift
@@ -76,6 +72,10 @@ while [ $# -gt 0 ]; do
     --reset )
       reset=true
       shift
+      ;;
+    --token )
+      token=$2
+      shift; shift
       ;;
     --url )
       url=${2%/}
@@ -90,7 +90,7 @@ done
 
 set -e
 
-if [ -z "${id_token}" ]; then
+if [ -z "${token}" ]; then
   error_handler "Please specify an id token:  --id-token <string>"
 elif [ -z "${url}" ]; then
   error_handler "Please specify a url:  --url <string>"
@@ -110,11 +110,11 @@ if [ -z "${reset}" ]; then
   model_settings=$(printf "%s," "${model_settings[@]}")
   model_settings="${model_settings%,}"
 
-  curl -s -X PATCH "${url}/organization/settings/admin-ui-added-models" -H "Authorization: Bearer ${id_token}" \
+  curl -s -X PATCH "${url}/organization/settings/admin-ui-added-models" -H "Authorization: Bearer ${token}" \
     -H "Content-Type: application/json" -d "{\"models\":[${model_settings}]}" | jq '.settings.adminUiAddedModels'
 else
-  curl -s -X DELETE "${url}/organization/settings/adminUiAddedModels" -H "Authorization: Bearer ${id_token}"
-  curl -s "${url}/organization/settings" -H "Authorization: Bearer ${id_token}" | jq '.settings.adminUiAddedModels'
+  curl -s -X DELETE "${url}/organization/settings/adminUiAddedModels" -H "Authorization: Bearer ${token}"
+  curl -s "${url}/organization/settings" -H "Authorization: Bearer ${token}" | jq '.settings.adminUiAddedModels'
 fi
 
 exit 0
