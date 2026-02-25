@@ -85,6 +85,7 @@ helm template tabnine ${chart} \
   --set global.image.registry=registry.tabnine.com \
   --set clickhouse.image.registry=registry.tabnine.com/public \
   --set clickhouse.image.repository=bitnami/clickhouse \
+  --set indexer.contextEngine.sidecar.image.repository=registry.tabnine.com/private/sidecar-proxy \
   --set inference.nats.container.image.registry=registry.tabnine.com/public \
   --set inference.nats.natsBox.container.image.registry=registry.tabnine.com/public \
   --set inference.nats.promExporter.image.registry=registry.tabnine.com/public \
