@@ -95,6 +95,7 @@ echo "Proceeding with backup..."
 
 # Disable row level security before backup
 ${kubectl_cmd} exec -n ${namespace} ${postgres_pod} -- /bin/sh -c "PGPASSWORD=${db_password} psql -h localhost -U tabnine -d tabnine -c \"
+ALTER TABLE acess_tokens NO FORCE ROW LEVEL SECURITY;
 ALTER TABLE audit_log_entries NO FORCE ROW LEVEL SECURITY;
 ALTER TABLE organization_settings NO FORCE ROW LEVEL SECURITY;
 ALTER TABLE organization_users NO FORCE ROW LEVEL SECURITY;
@@ -113,6 +114,7 @@ ${kubectl_cmd} exec -n ${namespace} ${postgres_pod} -- /bin/sh -c "rm -f /tmp/du
 
 # Re-enable row level security after backup
 ${kubectl_cmd} exec -n ${namespace} ${postgres_pod} -- /bin/sh -c "PGPASSWORD=${db_password} psql -h localhost -U tabnine -d tabnine -c \"
+ALTER TABLE access_tokens ENABLE ROW LEVEL SECURITY;
 ALTER TABLE audit_log_entries ENABLE ROW LEVEL SECURITY;
 ALTER TABLE organization_settings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE organization_users ENABLE ROW LEVEL SECURITY;

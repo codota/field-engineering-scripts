@@ -299,6 +299,7 @@ fi
 echo "Setting up row level security and permissions..."
 if [[ "$mode" == "kubernetes" ]]; then
     ${kubectl_cmd} exec -n ${namespace} ${postgres_pod} -- /bin/sh -c "PGPASSWORD=${db_password} psql -h localhost -U tabnine -d tabnine -c \"
+    ALTER TABLE access_tokens ENABLE ROW LEVEL SECURITY;
     ALTER TABLE audit_log_entries ENABLE ROW LEVEL SECURITY;
     ALTER TABLE organization_settings ENABLE ROW LEVEL SECURITY;
     ALTER TABLE organization_users ENABLE ROW LEVEL SECURITY;
@@ -311,6 +312,7 @@ if [[ "$mode" == "kubernetes" ]]; then
     \"" > /dev/null 2>&1 || handle_error "Failed to re-enable row level security"
 else
     PGPASSWORD="${admin_password}" psql -h "${remote_host}" -p "${remote_port}" -U "${admin_user}" -d "${remote_db}" -c "
+    ALTER TABLE IF EXISTS access_tokens ENABLE ROW LEVEL SECURITY;
     ALTER TABLE IF EXISTS audit_log_entries ENABLE ROW LEVEL SECURITY;
     ALTER TABLE IF EXISTS organization_settings ENABLE ROW LEVEL SECURITY;
     ALTER TABLE IF EXISTS organization_users ENABLE ROW LEVEL SECURITY;
