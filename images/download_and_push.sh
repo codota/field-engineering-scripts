@@ -17,6 +17,7 @@ function show_help() {
   echo -e "      --cleanup                              Delete downloaded images"
   echo -e "      --dry-run                              Print docker commands"
   echo -e "      --ecr                                  Print ECR repository names"
+  echo -e "      --keda-enabled                         Enable KEDA"
   echo -e "      --list <file>                          List of images"
   echo -e "      --repo <string>                        Target registry repository for --list   default: tabnine"
   echo -e "      --values <file>                        Helm chart values file"
@@ -42,7 +43,7 @@ while [ $# -gt 0 ]; do
       ;;
     --attribution-enabled )
       attribution_enabled=true
-      shift;
+      shift
       ;;
     --attribution-values )
       attribution_values=${2%/}
@@ -66,6 +67,10 @@ while [ $# -gt 0 ]; do
       ;;
     --help )
       show_help
+      ;;
+    --keda-enabled )
+      keda_enabled=true
+      shift
       ;;
     --list )
       list=${2%/}
@@ -106,10 +111,11 @@ fi
 set -e
 
 attribution_chart=${attribution_chart:-"oci://registry.tabnine.com/self-hosted/tabnine-attribution-db"}
-chart=${chart:-"oci://registry.tabnine.com/self-hosted/tabnine-cloud"}
 ecr_repos=()
+keda_chart="oci://registry.tabnine.com/self-hosted/keda"
 registry=$(echo ${registry} | sed 's/\//\\\//g')
 repo=${repo:-tabnine}
+tabnine_chart=${chart:-"oci://registry.tabnine.com/self-hosted/tabnine-cloud"}
 
 if [ -f "${list}" ]; then
   base_repo=$(echo ${repo} | sed 's/\//\\\//g')
@@ -122,7 +128,7 @@ fi
 if [ -f "${list}" ]; then
   images_list=$(cat ${list})
 else
-  helm template tabnine ${chart} \
+  helm template tabnine ${tabnine_chart} \
     --namespace tabnine \
     --set global.image.baseRepo=public \
     --set global.image.privateRepo=private \
@@ -142,7 +148,7 @@ else
     --version "${version}" | yq --no-doc '.. | .image? | select(.)' | sort -u > images.tmp
   
   if [ -n "${attribution_enabled}" ]; then
-    helm template tabnine ${attribution_chart} \
+    helm template attribution ${attribution_chart} \
       --namespace tabnine \
       --set global.image.baseRepo=public \
       --set global.image.privateRepo=private \
@@ -150,6 +156,18 @@ else
       --skip-tests \
       --values "${attribution_values}" \
       --version "${version}" | yq --no-doc '.. | .image? | select(.)' | sort -u >> images.tmp
+  fi
+  
+  if [ -n "${keda_enabled}" ]; then
+    helm template keda ${keda_chart} \
+      --namespace keda \
+      --set image.keda.registry=registry.tabnine.com \
+      --set image.keda.repository=public/kedacore/keda \
+      --set image.metricsApiServer.registry=registry.tabnine.com \
+      --set image.metricsApiServer.repository=public/kedacore/keda-metrics-apiserver \
+      --set image.webhooks.registry=registry.tabnine.com \
+      --set image.webhooks.repository=public/kedacore/keda-admission-webhooks \
+      --skip-tests | yq --no-doc 'select(.kind == "Deployment") | .. | .image? | select(.)' | sort -u >> images.tmp
   fi
   
   sort -o images.tmp images.tmp

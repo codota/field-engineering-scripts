@@ -18,6 +18,7 @@ Usage: generate_image_list.sh [required] [options]
     --attribution-enabled                  Enable local attribution
     --attribution-values <file>            Helm Chart values file      example: ./values.yaml
     --chart <file|path|url>                Helm Chart location         default: oci://registry.tabnine.com/self-hosted/tabnine-cloud
+    --keda-enabled                         Enable KEDA
     --output <file>                        Write output to a file      default: ./images.list
     --version <string>                     Helm Chart version          default: latest
 ```
@@ -50,6 +51,7 @@ Usage: download_and_push.sh [required] [options]
     --cleanup                              Delete downloaded images
     --dry-run                              Print docker commands
     --ecr                                  Print ECR repository names
+    --keda-enabled                         Enable KEDA
     --list <file>                          List of images
     --repo <string>                        Target registry repository for --list   default: tabnine
     --values <file>                        Helm chart values file
@@ -81,6 +83,7 @@ Usage: download_and_save.sh [options]
     --chart <file|path|url>                Helm chart location             default: oci://registry.tabnine.com/self-hosted/tabnine-cloud
     --cleanup                              Delete downloaded images
     --dry-run                              Print docker commands
+    --keda-enabled                         Enable KEDA
     --list <file>                          List of images                  example: ./images.txt
     --output <path>                        Write images to specifc path    default: ./
     --values <file>                        Helm chart values file          example: ./values.yaml
