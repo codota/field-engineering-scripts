@@ -43,17 +43,18 @@ Usage: set_team_models.sh [required] [optional]
         GPT-5.2                    24
         GPT-5.2 Codex              25
         GPT-5.3 Codex              26
-        GPT-OSS                    27
-        Llama 3.1 405B             28
-        Llama 3.1 70B              29
-        Llama 3.3 70B              30
-        MiniMax 2.5                31
-        MiniMax M2 230B            32
-        Mistral                    33
-        Mistral 7B                 34
-        Qwen                       35
-        Qwen Coder 3 30B           36
-        Tabnine Protected          37
+        GPT-5.4                    27
+        GPT-OSS                    28
+        Llama 3.1 405B             29
+        Llama 3.1 70B              30
+        Llama 3.3 70B              31
+        MiniMax 2.5                32
+        MiniMax M2 230B            33
+        Mistral                    34
+        Mistral 7B                 35
+        Qwen                       36
+        Qwen Coder 3 30B           37
+        Tabnine Protected          38
 
     --team-name <string>         Team name                       example: Tabnine Team (case sensitive)
                                                                  Use "default" for the default team

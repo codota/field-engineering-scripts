@@ -27,6 +27,7 @@
 # 01a524ea-36d3-4ebd-a78a-ff5ed37b1530    GPT-5.2
 # 01a524ea-36d3-4ebd-a78a-ff5ed37b1531    GPT-5.2 Codex
 # 01a524ea-36d3-4ebd-a78a-ff5ed37b1532    GPT-5.3 Codex
+# 01a524ea-36d3-4ebd-a78a-ff5ed37b1533    GPT-5.4
 # a773a0f9-ed11-4a5c-9f5c-729be13b3023    GPT-OSS
 # d24e7445-9ddf-43e1-bd13-92245b3fe5a8    Llama 3.1 405B
 # 564172fb-5d9d-49ba-b592-d5ac3a70b39e    Llama 3.1 70B
@@ -67,6 +68,7 @@ models=(
   "01a524ea-36d3-4ebd-a78a-ff5ed37b1530"
   "01a524ea-36d3-4ebd-a78a-ff5ed37b1531"
   "01a524ea-36d3-4ebd-a78a-ff5ed37b1532"
+  "01a524ea-36d3-4ebd-a78a-ff5ed37b1533"
   "a773a0f9-ed11-4a5c-9f5c-729be13b3023"
   "d24e7445-9ddf-43e1-bd13-92245b3fe5a8"
   "564172fb-5d9d-49ba-b592-d5ac3a70b39e"
@@ -149,17 +151,18 @@ function show_help() {
   echo -e "          GPT-5.2                    24"
   echo -e "          GPT-5.2 Codex              25"
   echo -e "          GPT-5.3 Codex              26"
-  echo -e "          GPT-OSS                    27"
-  echo -e "          Llama 3.1 405B             28"
-  echo -e "          Llama 3.1 70B              29"
-  echo -e "          Llama 3.3 70B              30"
-  echo -e "          MiniMax 2.5                31"
-  echo -e "          MiniMax M2 230B            32"
-  echo -e "          Mistral                    33"
-  echo -e "          Mistral 7B                 34"
-  echo -e "          Qwen                       35"
-  echo -e "          Qwen Coder 3 30B           36"
-  echo -e "          Tabnine Protected          37\n"
+  echo -e "          GPT-5.4                    27"
+  echo -e "          GPT-OSS                    28"
+  echo -e "          Llama 3.1 405B             29"
+  echo -e "          Llama 3.1 70B              30"
+  echo -e "          Llama 3.3 70B              31"
+  echo -e "          MiniMax 2.5                32"
+  echo -e "          MiniMax M2 230B            33"
+  echo -e "          Mistral                    34"
+  echo -e "          Mistral 7B                 35"
+  echo -e "          Qwen                       36"
+  echo -e "          Qwen Coder 3 30B           37"
+  echo -e "          Tabnine Protected          38\n"
   echo -e "      --team-name <string>         Team name                       example: Tabnine Team (case sensitive)"
   echo -e "                                                                            Use \"default\" for the default team\n"
   echo -e "      --token <string>             Token                           example: t9u_tkvKUciAHfULXhfdDKBBUNvWt5g..."
