@@ -14,7 +14,6 @@ function show_help() {
   echo -e "      --chart <file|path|url>                Helm chart location             default: oci://registry.tabnine.com/self-hosted/tabnine-cloud"
   echo -e "      --cleanup                              Delete downloaded images"
   echo -e "      --dry-run                              Print docker commands"
-  echo -e "      --keda-enabled                         Enable KEDA"
   echo -e "      --list <file>                          List of images                  example: ./images.txt"
   echo -e "      --output <path>                        Write images to specifc path    default: ./"
   echo -e "      --values <file>                        Helm chart values file          example: ./values.yaml"
@@ -60,10 +59,6 @@ while [ $# -gt 0 ]; do
       ;;
     --help )
       show_help
-      ;;
-    --keda-enabled )
-      keda_enabled=true
-      shift
       ;;
     --list )
       list=${2%/}
@@ -131,6 +126,16 @@ else
     --skip-tests \
     --values "${values}" \
     --version "${version}" | yq --no-doc '.. | .image? | select(.)' | sort -u > images.tmp
+    
+  helm template keda ${keda_chart} \
+    --namespace keda \
+    --set image.keda.registry=registry.tabnine.com \
+    --set image.keda.repository=public/kedacore/keda \
+    --set image.metricsApiServer.registry=registry.tabnine.com \
+    --set image.metricsApiServer.repository=public/kedacore/keda-metrics-apiserver \
+    --set image.webhooks.registry=registry.tabnine.com \
+    --set image.webhooks.repository=public/kedacore/keda-admission-webhooks \
+    --skip-tests | yq --no-doc 'select(.kind == "Deployment") | .. | .image? | select(.)' | sort -u >> images.tmp
   
   if [ -n "${attribution_enabled}" ]; then
     helm template attribution ${attribution_chart} \
@@ -141,18 +146,6 @@ else
       --skip-tests \
       --values "${attribution_values}" \
       --version "${version}" | yq --no-doc '.. | .image? | select(.)' | sort -u >> images.tmp
-  fi
-  
-  if [ -n "${keda_enabled}" ]; then
-    helm template keda ${keda_chart} \
-      --namespace keda \
-      --set image.keda.registry=registry.tabnine.com \
-      --set image.keda.repository=public/kedacore/keda \
-      --set image.metricsApiServer.registry=registry.tabnine.com \
-      --set image.metricsApiServer.repository=public/kedacore/keda-metrics-apiserver \
-      --set image.webhooks.registry=registry.tabnine.com \
-      --set image.webhooks.repository=public/kedacore/keda-admission-webhooks \
-      --skip-tests | yq --no-doc 'select(.kind == "Deployment") | .. | .image? | select(.)' | sort -u >> images.tmp
   fi
   
   sort -o images.tmp images.tmp
