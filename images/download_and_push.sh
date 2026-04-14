@@ -20,7 +20,8 @@ function show_help() {
   echo -e "      --list <file>                          List of images"
   echo -e "      --repo <string>                        Target registry repository for --list   default: tabnine"
   echo -e "      --values <file>                        Helm chart values file"
-  echo -e "      --version <string>                     Helm chart version                      default: latest\n"
+  echo -e "      --version <string>                     Helm chart version                      default: latest"
+  echo -e "      --vllm <string>                        Enable vLLM                             example: offline | online\n"
   exit 0
 }
 
@@ -87,6 +88,10 @@ while [ $# -gt 0 ]; do
       version=$2
       shift; shift
       ;;
+    --vllm )
+      vllm_mode=$2
+      shift; shift
+      ;;
     * )
       error_handler "Invalid Parameter  $1"
       ;;
@@ -111,6 +116,13 @@ keda_chart="oci://registry.tabnine.com/self-hosted/keda"
 registry=$(echo ${registry} | sed 's/\//\\\//g')
 repo=${repo:-tabnine}
 tabnine_chart=${chart:-"oci://registry.tabnine.com/self-hosted/tabnine-cloud"}
+vllm_chart="oci://registry.tabnine.com/self-hosted/vllm"
+
+if [ "${vllm_mode}" == "offline" ]; then
+  vllm_mode="false"
+elif [ "${vllm_mode}" == "online" ]; then
+  vllm_mode="true"
+fi
 
 if [ -f "${list}" ]; then
   base_repo=$(echo ${repo} | sed 's/\//\\\//g')
@@ -161,6 +173,13 @@ else
       --skip-tests \
       --values "${attribution_values}" \
       --version "${version}" | yq --no-doc '.. | .image? | select(.)' | sort -u >> images.tmp
+  fi
+  
+  if [ -n "${vllm_mode}" ]; then
+    helm template vllm ${vllm_chart} \
+      --namespace vlm \
+      --set online=${vllm_mode} \
+      --skip-tests | yq --no-doc '.. | .image? | select(.)' | sort -u >> images.tmp
   fi
   
   sort -o images.tmp images.tmp

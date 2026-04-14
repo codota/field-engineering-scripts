@@ -15,7 +15,8 @@ function show_help() {
   echo -e "      --attribution-values <file>            Helm Chart values file      example: ./values.yaml"
   echo -e "      --chart <file|path|url>                Helm Chart location         default: oci://registry.tabnine.com/self-hosted/tabnine-cloud"
   echo -e "      --output <file>                        Write output to a file      default: ./images.list"
-  echo -e "      --version <string>                     Helm Chart version          default: latest\n"
+  echo -e "      --version <string>                     Helm Chart version          default: latest"
+  echo -e "      --vllm <string>                        Enable vLLM                 example: offline | online\n"
   exit 0
 }
 
@@ -60,6 +61,10 @@ while [ $# -gt 0 ]; do
       version=$2
       shift; shift
       ;;
+    --vllm )
+      vllm_mode=$2
+      shift; shift
+      ;;
     * )
       error_handler "Invalid Parameter:  $1"
       ;;
@@ -78,6 +83,13 @@ attribution_chart=${attribution_chart:-"oci://registry.tabnine.com/self-hosted/t
 keda_chart="oci://registry.tabnine.com/self-hosted/keda"
 tabnine_chart=${tabnine_chart:-"oci://registry.tabnine.com/self-hosted/tabnine-cloud"}
 output=${output:-images.list}
+vllm_chart="oci://registry.tabnine.com/self-hosted/vllm"
+
+if [ "${vllm_mode}" == "offline" ]; then
+  vllm_mode="false"
+elif [ "${vllm_mode}" == "online" ]; then
+  vllm_mode="true"
+fi
 
 helm template tabnine ${tabnine_chart} \
   --namespace tabnine \
@@ -117,6 +129,13 @@ if [ -n "${attribution_enabled}" ]; then
     --skip-tests \
     --values "${attribution_values}" \
     --version "${version}" | yq --no-doc '.. | .image? | select(.)' | sort -u >> ${output}
+fi
+
+if [ -n "${vllm_mode}" ]; then
+  helm template vllm ${vllm_chart} \
+    --namespace vlm \
+    --set online=${vllm_mode} \
+    --skip-tests | yq --no-doc '.. | .image? | select(.)' | sort -u >> ${output}
 fi
 
 sort -o ${output} ${output}

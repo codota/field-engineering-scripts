@@ -21,6 +21,7 @@ Usage: generate_image_list.sh [required] [options]
     --keda-enabled                         Enable KEDA
     --output <file>                        Write output to a file      default: ./images.list
     --version <string>                     Helm Chart version          default: latest
+    --vllm <string>                        Enable vLLM                 example: offline | online
 ```
 
 ```
@@ -31,7 +32,8 @@ Example:
     --attribution-values ./values-attribution.yaml \
     --output /var/tmp/images.txt \
     --values ./values.yaml \
-    --version 5.20.0
+    --version 6.0.5 \
+    --vllm offline
 ```
 
 #### download\_and\_push.sh
@@ -56,6 +58,7 @@ Usage: download_and_push.sh [required] [options]
     --repo <string>                        Target registry repository for --list   default: tabnine
     --values <file>                        Helm chart values file
     --version <string>                     Helm chart version                      default: latest
+    --vllm <string>                        Enable vLLM                             example: offline | online
 ```
 
 ```
@@ -67,7 +70,8 @@ Example:
     --cleanup \
     --registry docker.io \
     --values ./values.yaml \
-    --version 5.20.0
+    --version 6.0.5 \
+    --vllm offline
 ```
 
 #### download\_and\_save.sh
@@ -88,6 +92,7 @@ Usage: download_and_save.sh [options]
     --output <path>                        Write images to specifc path    default: ./
     --values <file>                        Helm chart values file          example: ./values.yaml
     --version <string>                     Helm chart version              default: latest
+    --vllm <string>                        Enable vLLM                     example: offline | online
 ```
 
 ```
@@ -99,5 +104,6 @@ Example:
     --cleanup \
     --output /var/tmp \
     --values ./values.yaml \
-    --version 5.20.0
+    --version 6.0.5 \
+    --vllm offline
 ```
