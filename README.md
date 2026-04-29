@@ -5,4 +5,5 @@ This is a repository of useful scripts for managing your Tabnine Enterprise inst
 [Scripts](https://github.com/codota/field-engineering-scripts/tree/main/databases) related to database backup and restore.<br>
 [Scripts](https://github.com/codota/field-engineering-scripts/tree/main/images) related to container image management.<br>
 [Scripts](https://github.com/codota/field-engineering-scripts/tree/main/models) related to model management.<br>
+[Scripts](https://github.com/codota/field-engineering-scripts/tree/main/postgres-upgrade) related to Postgres upgrade.<br>
 [Scripts](https://github.com/codota/field-engineering-scripts/tree/main/quota) related to quota management.
