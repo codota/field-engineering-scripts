@@ -104,6 +104,7 @@ helm template tabnine ${tabnine_chart} \
   --set inference.nats.promExporter.image.registry=registry.tabnine.com/public \
   --set inference.nats.reloader.image.registry=registry.tabnine.com/public \
   --set logs-aggregation.extraContainers[0].image=registry.tabnine.com/public/blacklabelops/logrotate:1.3 \
+  --set postgresql.upgrade.enabled=true \
   --set prometheus-blackbox-exporter.global.imageRegistry=registry.tabnine.com/public \
   --set qdrant2.image.repository=registry.tabnine.com/public/qdrant/qdrant \
   --skip-tests \
