@@ -125,6 +125,7 @@ else
     --set global.image.baseRepo=public \
     --set global.image.privateRepo=private \
     --set global.image.registry=registry.tabnine.com \
+    --set global.monitoring.enabled=true \
     --set clickhouse.image.registry=registry.tabnine.com/public \
     --set clickhouse.image.repository=bitnami/clickhouse \
     --set indexer.contextEngine.sidecar.image.repository=registry.tabnine.com/private/sidecar-proxy \
