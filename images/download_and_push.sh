@@ -149,7 +149,11 @@ else
     --set inference.nats.promExporter.image.registry=registry.tabnine.com/public \
     --set inference.nats.reloader.image.registry=registry.tabnine.com/public \
     --set logs-aggregation.extraContainers[0].image=registry.tabnine.com/public/blacklabelops/logrotate:1.3 \
+    --set postgresql.image.registry=registry.tabnine.com \
+    --set postgresql.image.repository=public/bitnamisecure/postgresql \
+    --set postgresql.upgrade.busyboxImage.repository=busybox \
     --set postgresql.upgrade.enabled=true \
+    --set postgresql.upgrade.image.repository=pgautoupgrade/pgautoupgrade \
     --set prometheus-blackbox-exporter.global.imageRegistry=registry.tabnine.com/public \
     --set qdrant2.image.repository=registry.tabnine.com/public/qdrant/qdrant \
     --skip-tests \
