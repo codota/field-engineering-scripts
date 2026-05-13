@@ -19,7 +19,7 @@ kubectl run pg-backup --restart=Never \
       \"containers\": [{
         \"name\": \"pg-backup\",
         \"image\": \"$IMAGE\",
-        \"command\": [\"sh\", \"-c\", \"pg_dumpall -h tabnine-postgresql -U postgres -f /tmp/dump.sql && echo done && sleep 3600\"],
+        \"command\": [\"sh\", \"-c\", \"pg_dumpall -h $NAMESPACE-postgresql -U postgres -f /tmp/dump.sql && echo done && sleep 3600\"],
         \"env\": [{
           \"name\": \"PGPASSWORD\",
           \"valueFrom\": {\"secretKeyRef\": {\"name\": \"tabnine-database\", \"key\": \"postgres-password\"}}
