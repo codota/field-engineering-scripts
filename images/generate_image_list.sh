@@ -107,6 +107,10 @@ helm template tabnine ${tabnine_chart} \
   --set logs-aggregation.extraContainers[0].image=registry.tabnine.com/public/blacklabelops/logrotate:1.3 \
   --set postgresql.image.registry=registry.tabnine.com \
   --set postgresql.image.repository=public/bitnamisecure/postgresql \
+  --set postgresql.metrics.enabled=true \
+  --set postgresql.metrics.image.registry=registry.tabnine.com \
+  --set postgresql.metrics.image.repository=public/bitnamisecure/postgres-exporter \
+  --set postgresql.metrics.image.tag=0.16.0 \
   --set postgresql.upgrade.busyboxImage.repository=busybox \
   --set postgresql.upgrade.enabled=true \
   --set postgresql.upgrade.image.repository=pgautoupgrade/pgautoupgrade \
