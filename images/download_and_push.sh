@@ -1,28 +1,26 @@
 #!/usr/bin/env bash
 
+function display_help() {
+  echo -e "\n  Usage: ${0##*/} [required] [optional]\n"
+  echo -e "    Required:"
+  echo -e "      --registry <string>        Target registry hostname            example: docker.io"
+  echo -e "      --values <path>            Helm Chart values file              example: ./values.yaml\n"
+  echo -e "    Optional:"
+  echo -e "      --attribution              Enable Attribution"
+  echo -e "      --chart <path|url>         Path to Helm Chart                  default: oci://registry.tabnine.com/self-hosted/tabnine-cloud"
+  echo -e "      --cleanup                  Delete downloaded images"
+  echo -e "      --dry-run                  Print docker commands"
+  echo -e "      --help                     Display help"
+  echo -e "      --keda                     Enable KEDA"
+  echo -e "      --version <string>         Helm chart version                  default: latest"
+  echo -e "      --vllm                     Enable vLLM"
+  echo -e "      --vllm-online <bool>       vLLM Internet access enabled        default: false\n"
+  exit 0
+}
+
 function error_handler() {
   echo -e "\n  ${1}\n"
   exit 1
-}
-
-function show_help() {
-  echo -e "\n  Usage: ${0##*/} [required] [options]\n"
-  echo -e "    Required:"
-  echo -e "      --registry <string>                    Target registry hostname                example: docker.io\n"
-  echo -e "    Options:"
-  echo -e "      --attribution-chart <file|path|url>    Helm chart location                     default: oci://registry.tabnine.com/self-hosted/tabnine-attribution-db"
-  echo -e "      --attribution-enabled                  Enable local attribution lookup"
-  echo -e "      --attribution-values <file>            Helm chart values file                  example: ./values.yaml"
-  echo -e "      --chart <file|path|url>                Helm chart location                     default: oci://registry.tabnine.com/self-hosted/tabnine-cloud"
-  echo -e "      --cleanup                              Delete downloaded images"
-  echo -e "      --dry-run                              Print docker commands"
-  echo -e "      --ecr                                  Print ECR repository names"
-  echo -e "      --list <file>                          List of images"
-  echo -e "      --repo <string>                        Target registry repository for --list   default: tabnine"
-  echo -e "      --values <file>                        Helm chart values file"
-  echo -e "      --version <string>                     Helm chart version                      default: latest"
-  echo -e "      --vllm <string>                        Enable vLLM                             example: offline | online\n"
-  exit 0
 }
 
 if ! command -v docker &> /dev/null; then
@@ -31,23 +29,15 @@ elif ! command -v helm &> /dev/null; then
   error_handler "Please install helm - https://helm.sh/docs/intro/install/"
 elif ! command -v yq &> /dev/null; then
   error_handler "Please install yq >= 1.7 - https://github.com/mikefarah/yq"
-elif [ $# -lt 2 ]; then
-  show_help
+elif [ $# -lt 4 ]; then
+  display_help
 fi
 
 while [ $# -gt 0 ]; do
   case $1 in
-    --attribution-chart )
-      attribution_chart=${2%/}
-      shift; shift
-      ;;
-    --attribution-enabled )
-      attribution_enabled=true
+    --attribution )
+      attribution=true
       shift
-      ;;
-    --attribution-values )
-      attribution_values=${2%/}
-      shift; shift
       ;;
     --chart )
       chart=${2%/}
@@ -61,23 +51,15 @@ while [ $# -gt 0 ]; do
       dry_run=true
       shift
       ;;
-    --ecr )
-      ecr=true
-      shift
-      ;;
     --help )
-      show_help
+      display_help
       ;;
-    --list )
-      list=${2%/}
-      shift; shift
+    --keda )
+      keda=true
+      shift
       ;;
     --registry )
       registry=$2
-      shift; shift
-      ;;
-    --repo )
-      repo=$2
       shift; shift
       ;;
     --values )
@@ -89,7 +71,11 @@ while [ $# -gt 0 ]; do
       shift; shift
       ;;
     --vllm )
-      vllm_mode=$2
+      vllm=true
+      shift
+      ;;
+    --vllm-online )
+      vllm_online=$2
       shift; shift
       ;;
     * )
@@ -98,72 +84,71 @@ while [ $# -gt 0 ]; do
   esac
 done
 
-if [ -z "${registry}" ]; then
-  error_handler "Please specify a registry:  --registry <hostname>"
-elif [ ! -f "${values}" ] && [ ! -f "${list}" ]; then
-  error_handler "Please specify a Helm chart values file or list of images:  --values <file> or --list <file>"
-elif [ -n "${attribution_enabled}" ] && [ ! -f "${attribution_values}" ]; then
-  error_handler "Please specify a Helm Chart values file:  --attribution-values <file>"
-elif [ -n "${output}" ] && [ ! -d "${output}" ]; then
-  error_handler "Please specify an output directory:  --output <path>"
+if [ ! -f "${values}" ]; then
+  error_handler "Please specify a Helm Chart values file:  --values <path>"
+elif [ -z "${registry}" ]; then
+  error_handler "Please specify a registry:  --registry <string>"
 fi
 
 set -e
 
 attribution_chart=${attribution_chart:-"oci://registry.tabnine.com/self-hosted/tabnine-attribution-db"}
-ecr_repos=()
 keda_chart="oci://registry.tabnine.com/self-hosted/keda"
 registry=$(echo ${registry} | sed 's/\//\\\//g')
-repo=${repo:-tabnine}
-tabnine_chart=${chart:-"oci://registry.tabnine.com/self-hosted/tabnine-cloud"}
+tabnine_chart=${tabnine_chart:-"oci://registry.tabnine.com/self-hosted/tabnine-cloud"}
 vllm_chart="oci://registry.tabnine.com/self-hosted/vllm"
+vllm_online=${vllm_online:-false}
 
-if [ "${vllm_mode}" == "offline" ]; then
-  vllm_mode="false"
-elif [ "${vllm_mode}" == "online" ]; then
-  vllm_mode="true"
-fi
+base_repo=$(cat ${values} | yq '.global.image.baseRepo' | sed 's/\//\\\//g')
+private_repo=$(cat ${values} | yq '.global.image.privateRepo' | sed 's/\//\\\//g')
 
-if [ -f "${list}" ]; then
-  base_repo=$(echo ${repo} | sed 's/\//\\\//g')
-  private_repo=$(echo ${repo} | sed 's/\//\\\//g')
-else
-  base_repo=$(cat ${values} | yq '.global.image.baseRepo' | sed 's/\//\\\//g')
-  private_repo=$(cat ${values} | yq '.global.image.privateRepo' | sed 's/\//\\\//g')
-fi
+# tabnine-cloud helm chart
+helm template tabnine ${tabnine_chart} \
+  --namespace tabnine \
+  --set clickhouse.image.registry=registry.tabnine.com/public \
+  --set clickhouse.image.repository=bitnami/clickhouse \
+  --set dbt.busyboxImage.repository=registry.tabnine.com/public/busybox \
+  --set global.image.baseRepo=public \
+  --set global.image.privateRepo=private \
+  --set global.image.registry=registry.tabnine.com \
+  --set global.monitoring.enabled=true \
+  --set indexer.contextEngine.sidecar.image.repository=registry.tabnine.com/private/sidecar-proxy \
+  --set inference.gateway.redisInit.image.registry=registry.tabnine.com \
+  --set inference.gateway.redisInit.image.repository=public/bitnamisecure/redis \
+  --set inference.gateway.redisInit.image.tag=8.6.2 \
+  --set inference.nats.container.image.registry=registry.tabnine.com/public \
+  --set inference.nats.natsBox.container.image.registry=registry.tabnine.com/public \
+  --set inference.nats.promExporter.image.registry=registry.tabnine.com/public \
+  --set inference.nats.reloader.image.registry=registry.tabnine.com/public \
+  --set logs-aggregation.extraContainers[0].image=registry.tabnine.com/public/blacklabelops/logrotate:1.3 \
+  --set nonEvictionRedis.image.registry=registry.tabnine.com \
+  --set nonEvictionRedis.image.repository=public/bitnamisecure/redis \
+  --set nonEvictionRedis.metrics.enabled=true \
+  --set nonEvictionRedis.metrics.image.registry=registry.tabnine.com \
+  --set nonEvictionRedis.metrics.image.repository=public/bitnami/redis-exporter \
+  --set nonEvictionRedis.metrics.image.tag=1.66.0-debian-12-r2 \
+  --set postgresql.image.registry=registry.tabnine.com \
+  --set postgresql.image.repository=public/bitnamisecure/postgresql \
+  --set postgresql.metrics.enabled=true \
+  --set postgresql.metrics.image.registry=registry.tabnine.com \
+  --set postgresql.metrics.image.repository=public/bitnamisecure/postgres-exporter \
+  --set postgresql.metrics.image.tag=0.16.0 \
+  --set postgresql.upgrade.busyboxImage.repository=registry.tabnine.com/public/busybox \
+  --set postgresql.upgrade.image.repository=registry.tabnine.com/public/pgautoupgrade \
+  --set prometheus-blackbox-exporter.global.imageRegistry=registry.tabnine.com/public \
+  --set qdrant2.image.repository=registry.tabnine.com/public/qdrant/qdrant \
+  --set redis.image.registry=registry.tabnine.com \
+  --set redis.image.repository=public/bitnamisecure/redis \
+  --set redis.metrics.enabled=true \
+  --set redis.metrics.image.registry=registry.tabnine.com \
+  --set redis.metrics.image.repository=public/bitnami/redis-exporter \
+  --set redis.metrics.image.tag=1.66.0-debian-12-r2 \
+  --skip-tests \
+  --values "${values}" \
+  --version "${version}" | yq --no-doc '.. | .image? | select(.)' | sort -u > images.tmp
 
-if [ -f "${list}" ]; then
-  images_list=$(cat ${list})
-else
-  helm template tabnine ${tabnine_chart} \
-    --namespace tabnine \
-    --set global.image.baseRepo=public \
-    --set global.image.privateRepo=private \
-    --set global.image.registry=registry.tabnine.com \
-    --set clickhouse.image.registry=registry.tabnine.com/public \
-    --set clickhouse.image.repository=bitnami/clickhouse \
-    --set global.monitoring.enabled=true \
-    --set indexer.contextEngine.sidecar.image.repository=registry.tabnine.com/private/sidecar-proxy \
-    --set inference.nats.container.image.registry=registry.tabnine.com/public \
-    --set inference.nats.natsBox.container.image.registry=registry.tabnine.com/public \
-    --set inference.nats.promExporter.image.registry=registry.tabnine.com/public \
-    --set inference.nats.reloader.image.registry=registry.tabnine.com/public \
-    --set logs-aggregation.extraContainers[0].image=registry.tabnine.com/public/blacklabelops/logrotate:1.3 \
-    --set postgresql.image.registry=registry.tabnine.com \
-    --set postgresql.image.repository=public/bitnamisecure/postgresql \
-    --set postgresql.metrics.enabled=true \
-    --set postgresql.metrics.image.registry=registry.tabnine.com \
-    --set postgresql.metrics.image.repository=public/bitnamisecure/postgres-exporter \
-    --set postgresql.metrics.image.tag=0.16.0 \
-    --set postgresql.upgrade.busyboxImage.repository=busybox \
-    --set postgresql.upgrade.enabled=true \
-    --set postgresql.upgrade.image.repository=pgautoupgrade/pgautoupgrade \
-    --set prometheus-blackbox-exporter.global.imageRegistry=registry.tabnine.com/public \
-    --set qdrant2.image.repository=registry.tabnine.com/public/qdrant/qdrant \
-    --skip-tests \
-    --values "${values}" \
-    --version "${version}" | yq --no-doc '.. | .image? | select(.)' | sort -u > images.tmp
-  
+# keda helm chart
+if [ -n "${keda}" ]; then
   helm template keda ${keda_chart} \
     --namespace keda \
     --set image.keda.registry=registry.tabnine.com \
@@ -173,60 +158,30 @@ else
     --set image.webhooks.registry=registry.tabnine.com \
     --set image.webhooks.repository=public/kedacore/keda-admission-webhooks \
     --skip-tests | yq --no-doc 'select(.kind == "Deployment") | .. | .image? | select(.)' | sort -u >> images.tmp
-  
-  if [ -n "${attribution_enabled}" ]; then
-    helm template attribution ${attribution_chart} \
-      --namespace tabnine \
-      --set global.image.baseRepo=public \
-      --set global.image.privateRepo=private \
-      --set global.image.registry=registry.tabnine.com \
-      --skip-tests \
-      --values "${attribution_values}" \
-      --version "${version}" | yq --no-doc '.. | .image? | select(.)' | sort -u >> images.tmp
-  fi
-  
-  if [ -n "${vllm_mode}" ]; then
-    helm template vllm ${vllm_chart} \
-      --namespace vlm \
-      --set online=${vllm_mode} \
-      --skip-tests | yq --no-doc '.. | .image? | select(.)' | sort -u >> images.tmp
-  fi
-  
-  sort -o images.tmp images.tmp
-  images_list=$(cat images.tmp)
-  rm -rf images.tmp
 fi
 
-if [ -n "${ecr}" ]; then
-  for image in ${images_list[@]}; do
-    ecr_repos+=($(echo ${image} | \
-      sed -e "s/registry.tabnine.com\/private/${registry}\/${private_repo}/g" | \
-      sed -e "s/registry.tabnine.com\/public/${registry}\/${base_repo}/g" | \
-      sed -e "s/quay.io/${registry}\/${base_repo}/g" | \
-      sed 's|:.*||'))
-  done
-  
-  clear
-  echo -e "\n  Please create the following AWS ECR repositories before continuing:\n"
-  
-  for name in ${ecr_repos[@]}; do
-    echo -e "    ${name}"
-  done
-  
-  echo -e "\n  AWS CLI commands:\n"
-  
-  for name in ${ecr_repos[@]}; do
-    name=$(echo ${name} | sed -e "s/${registry}\///g")
-    echo -e "    aws ecr create-repository --repository-name ${name}"
-  done
-  echo
-  
-  read -p "  Continue?  (yes/no) " continue
-  if [ "${continue}" != "y" ] && [ "${continue}" != "yes" ]; then
-    exit 0
-  fi
-  echo
+# tabnine-attribution-db helm chart
+if [ -n "${attribution}" ]; then
+  helm template attribution ${attribution_chart} \
+    --namespace tabnine \
+    --set global.image.baseRepo=public \
+    --set global.image.privateRepo=private \
+    --set global.image.registry=registry.tabnine.com \
+    --skip-tests \
+    --version "${version}" | yq --no-doc '.. | .image? | select(.)' | sort -u >> images.tmp
 fi
+  
+# vllm helm chart
+if [ -n "${vllm}" ]; then
+  helm template vllm ${vllm_chart} \
+    --namespace vlm \
+    --set online=${vllm_online} \
+    --skip-tests | yq --no-doc '.. | .image? | select(.)' | sort -u >> images.tmp
+fi
+
+sort -o images.tmp images.tmp
+images_list=$(cat images.tmp)
+rm -rf images.tmp
 
 for image in ${images_list[@]}; do
   target=$(echo ${image} | \
@@ -235,7 +190,7 @@ for image in ${images_list[@]}; do
     sed -e "s/quay.io/${registry}\/${base_repo}/g")
   
   if [ -z "${dry_run}" ]; then
-    docker pull --platform=linux/amd64 ${image}
+    docker pull ${image} --platform=linux/amd64
     docker tag ${image} ${target}
     docker push ${target}
     docker rmi ${target}
@@ -244,7 +199,7 @@ for image in ${images_list[@]}; do
       docker rmi ${image}
     fi
   else
-    echo "docker pull --platform=linux/amd64 ${image}"
+    echo "docker pull ${image} --platform=linux/amd64"
     echo "docker tag ${image} ${target}"
     echo "docker push ${target}"
     echo "docker rmi ${target}"

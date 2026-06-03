@@ -1,53 +1,50 @@
 #!/usr/bin/env bash
 
+function display_help() {
+  echo -e "\n  Usage: ${0##*/} [required] [optional]\n"
+  echo -e "    Required:"
+  echo -e "      --output <path>          Write image list to disk        example: ./images.txt"
+  echo -e "      --values <path>          Helm Chart values file          example: ./values.yaml\n"
+  echo -e "    Optional:"
+  echo -e "      --attribution            Enable Attribution"
+  echo -e "      --chart <path|url>       Path to Helm Chart              default: oci://registry.tabnine.com/self-hosted/tabnine-cloud"
+  echo -e "      --help                   Display help"
+  echo -e "      --keda                   Enable KEDA"
+  echo -e "      --version <string>       Helm Chart version              default: latest"
+  echo -e "      --vllm                   Enable vLLM"
+  echo -e "      --vllm-online <bool>     vLLM Internet access enabled    default: false\n"
+  exit 0
+}
+
 function error_handler() {
   echo -e "\n  ${1}\n"
   exit 1
-}
-
-function show_help() {
-  echo -e "\n  Usage: ${0##*/} [required] [options]\n"
-  echo -e "    Required:"
-  echo -e "      --values <file>                        Helm Chart values file      example: ./values.yaml\n"
-  echo -e "    Options:"
-  echo -e "      --attribution-chart <file|path|url>    Helm Chart location         default: oci://registry.tabnine.com/self-hosted/tabnine-attribution-db"
-  echo -e "      --attribution-enabled                  Enable local attribution"
-  echo -e "      --attribution-values <file>            Helm Chart values file      example: ./values.yaml"
-  echo -e "      --chart <file|path|url>                Helm Chart location         default: oci://registry.tabnine.com/self-hosted/tabnine-cloud"
-  echo -e "      --output <file>                        Write output to a file      default: ./images.list"
-  echo -e "      --version <string>                     Helm Chart version          default: latest"
-  echo -e "      --vllm <string>                        Enable vLLM                 example: offline | online\n"
-  exit 0
 }
 
 if ! command -v helm &> /dev/null; then
   error_handler "Please install helm - https://helm.sh/docs/intro/install"
 elif ! command -v yq &> /dev/null; then
   error_handler "Please install yq >= 1.7 - https://github.com/mikefarah/yq"
-elif [ $# -lt 1 ]; then
-  show_help
+elif [ $# -lt 4 ]; then
+  display_help
 fi
 
 while [ $# -gt 0 ]; do
   case $1 in
-    --attribution-chart )
-      attribution_chart=${2%/}
-      shift; shift
-      ;;
-    --attribution-enabled )
-      attribution_enabled=true
+    --attribution )
+      attribution=true
       shift
-      ;;
-    --attribution-values )
-      attribution_values=${2%/}
-      shift; shift
       ;;
     --chart )
       tabnine_chart=${2%/}
       shift; shift
       ;;
     --help )
-      show_help
+      display_help
+      ;;
+    --keda )
+      keda=true
+      shift
       ;;
     --output )
       output=${2%/}
@@ -62,7 +59,11 @@ while [ $# -gt 0 ]; do
       shift; shift
       ;;
     --vllm )
-      vllm_mode=$2
+      vllm=true
+      shift
+      ;;
+    --vllm-online )
+      vllm_online=$2
       shift; shift
       ;;
     * )
@@ -72,79 +73,93 @@ while [ $# -gt 0 ]; do
 done
 
 if [ ! -f "${values}" ]; then
-  error_handler "Please specify a Helm Chart values file:  --values <file>"
-elif [ -n "${attribution_enabled}" ] && [ ! -f "${attribution_values}" ]; then
-  error_handler "Please specify a Helm Chart values file:  --attribution-values <file>"
+  error_handler "Please specify a Helm Chart values file:  --values <path>"
+elif [ -z "${output}" ]; then
+  error_handler "Please specify an output path:  --output <path>"
 fi
 
 set -e
 
-attribution_chart=${attribution_chart:-"oci://registry.tabnine.com/self-hosted/tabnine-attribution-db"}
+attribution_chart="oci://registry.tabnine.com/self-hosted/tabnine-attribution-db"
 keda_chart="oci://registry.tabnine.com/self-hosted/keda"
 tabnine_chart=${tabnine_chart:-"oci://registry.tabnine.com/self-hosted/tabnine-cloud"}
-output=${output:-images.list}
 vllm_chart="oci://registry.tabnine.com/self-hosted/vllm"
+vllm_online=${vllm_online:-false}
 
-if [ "${vllm_mode}" == "offline" ]; then
-  vllm_mode="false"
-elif [ "${vllm_mode}" == "online" ]; then
-  vllm_mode="true"
-fi
-
+# tabnine-cloud helm chart
 helm template tabnine ${tabnine_chart} \
   --namespace tabnine \
+  --set clickhouse.image.registry=registry.tabnine.com/public \
+  --set clickhouse.image.repository=bitnami/clickhouse \
+  --set dbt.busyboxImage.repository=registry.tabnine.com/public/busybox \
   --set global.image.baseRepo=public \
   --set global.image.privateRepo=private \
   --set global.image.registry=registry.tabnine.com \
   --set global.monitoring.enabled=true \
-  --set clickhouse.image.registry=registry.tabnine.com/public \
-  --set clickhouse.image.repository=bitnami/clickhouse \
   --set indexer.contextEngine.sidecar.image.repository=registry.tabnine.com/private/sidecar-proxy \
+  --set inference.gateway.redisInit.image.registry=registry.tabnine.com \
+  --set inference.gateway.redisInit.image.repository=public/bitnamisecure/redis \
+  --set inference.gateway.redisInit.image.tag=8.6.2 \
   --set inference.nats.container.image.registry=registry.tabnine.com/public \
   --set inference.nats.natsBox.container.image.registry=registry.tabnine.com/public \
   --set inference.nats.promExporter.image.registry=registry.tabnine.com/public \
   --set inference.nats.reloader.image.registry=registry.tabnine.com/public \
   --set logs-aggregation.extraContainers[0].image=registry.tabnine.com/public/blacklabelops/logrotate:1.3 \
+  --set nonEvictionRedis.image.registry=registry.tabnine.com \
+  --set nonEvictionRedis.image.repository=public/bitnamisecure/redis \
+  --set nonEvictionRedis.metrics.enabled=true \
+  --set nonEvictionRedis.metrics.image.registry=registry.tabnine.com \
+  --set nonEvictionRedis.metrics.image.repository=public/bitnami/redis-exporter \
+  --set nonEvictionRedis.metrics.image.tag=1.66.0-debian-12-r2 \
   --set postgresql.image.registry=registry.tabnine.com \
   --set postgresql.image.repository=public/bitnamisecure/postgresql \
   --set postgresql.metrics.enabled=true \
   --set postgresql.metrics.image.registry=registry.tabnine.com \
   --set postgresql.metrics.image.repository=public/bitnamisecure/postgres-exporter \
   --set postgresql.metrics.image.tag=0.16.0 \
-  --set postgresql.upgrade.busyboxImage.repository=busybox \
-  --set postgresql.upgrade.enabled=true \
-  --set postgresql.upgrade.image.repository=pgautoupgrade/pgautoupgrade \
+  --set postgresql.upgrade.busyboxImage.repository=registry.tabnine.com/public/busybox \
+  --set postgresql.upgrade.image.repository=registry.tabnine.com/public/pgautoupgrade \
   --set prometheus-blackbox-exporter.global.imageRegistry=registry.tabnine.com/public \
   --set qdrant2.image.repository=registry.tabnine.com/public/qdrant/qdrant \
+  --set redis.image.registry=registry.tabnine.com \
+  --set redis.image.repository=public/bitnamisecure/redis \
+  --set redis.metrics.enabled=true \
+  --set redis.metrics.image.registry=registry.tabnine.com \
+  --set redis.metrics.image.repository=public/bitnami/redis-exporter \
+  --set redis.metrics.image.tag=1.66.0-debian-12-r2 \
   --skip-tests \
   --values "${values}" \
   --version "${version}" | yq --no-doc '.. | .image? | select(.)' | sort -u > ${output}
 
-helm template keda ${keda_chart} \
-  --namespace keda \
-  --set image.keda.registry=registry.tabnine.com \
-  --set image.keda.repository=public/kedacore/keda \
-  --set image.metricsApiServer.registry=registry.tabnine.com \
-  --set image.metricsApiServer.repository=public/kedacore/keda-metrics-apiserver \
-  --set image.webhooks.registry=registry.tabnine.com \
-  --set image.webhooks.repository=public/kedacore/keda-admission-webhooks \
-  --skip-tests | yq --no-doc 'select(.kind == "Deployment") | .. | .image? | select(.)' | sort -u >> ${output}
+# keda helm chart
+if [ -n "${keda}" ]; then
+  helm template keda ${keda_chart} \
+    --namespace keda \
+    --set image.keda.registry=registry.tabnine.com \
+    --set image.keda.repository=public/kedacore/keda \
+    --set image.metricsApiServer.registry=registry.tabnine.com \
+    --set image.metricsApiServer.repository=public/kedacore/keda-metrics-apiserver \
+    --set image.webhooks.registry=registry.tabnine.com \
+    --set image.webhooks.repository=public/kedacore/keda-admission-webhooks \
+    --skip-tests | yq --no-doc 'select(.kind == "Deployment") | .. | .image? | select(.)' | sort -u >> ${output}
+fi
 
-if [ -n "${attribution_enabled}" ]; then
+# tabnine-attribution-db helm chart
+if [ -n "${attribution}" ]; then
   helm template attribution ${attribution_chart} \
     --namespace tabnine \
     --set global.image.baseRepo=public \
     --set global.image.privateRepo=private \
     --set global.image.registry=registry.tabnine.com \
     --skip-tests \
-    --values "${attribution_values}" \
     --version "${version}" | yq --no-doc '.. | .image? | select(.)' | sort -u >> ${output}
 fi
 
-if [ -n "${vllm_mode}" ]; then
+# vllm helm chart
+if [ -n "${vllm}" ]; then
   helm template vllm ${vllm_chart} \
     --namespace vlm \
-    --set online=${vllm_mode} \
+    --set online=${vllm_online} \
     --skip-tests | yq --no-doc '.. | .image? | select(.)' | sort -u >> ${output}
 fi
 
