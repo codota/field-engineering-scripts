@@ -98,7 +98,7 @@ helm template tabnine ${tabnine_chart} \
   --set global.monitoring.enabled=true \
   --set indexer.contextEngine.sidecar.image.repository=registry.tabnine.com/private/sidecar-proxy \
   --set inference.gateway.redisInit.image.registry=registry.tabnine.com \
-  --set inference.gateway.redisInit.image.repository=public/bitnamisecure/redis \
+  --set inference.gateway.redisInit.image.repository=bitnamisecure/redis \
   --set inference.gateway.redisInit.image.tag=8.6.2 \
   --set inference.nats.container.image.registry=registry.tabnine.com/public \
   --set inference.nats.natsBox.container.image.registry=registry.tabnine.com/public \
@@ -109,8 +109,8 @@ helm template tabnine ${tabnine_chart} \
   --set nonEvictionRedis.image.repository=public/bitnamisecure/redis \
   --set nonEvictionRedis.metrics.enabled=true \
   --set nonEvictionRedis.metrics.image.registry=registry.tabnine.com \
-  --set nonEvictionRedis.metrics.image.repository=public/bitnami/redis-exporter \
-  --set nonEvictionRedis.metrics.image.tag=1.66.0-debian-12-r2 \
+  --set nonEvictionRedis.metrics.image.repository=public/bitnamisecure/redis-exporter \
+  --set nonEvictionRedis.metrics.image.tag=1.86.0 \
   --set postgresql.image.registry=registry.tabnine.com \
   --set postgresql.image.repository=public/bitnamisecure/postgresql \
   --set postgresql.metrics.enabled=true \
@@ -125,8 +125,8 @@ helm template tabnine ${tabnine_chart} \
   --set redis.image.repository=public/bitnamisecure/redis \
   --set redis.metrics.enabled=true \
   --set redis.metrics.image.registry=registry.tabnine.com \
-  --set redis.metrics.image.repository=public/bitnami/redis-exporter \
-  --set redis.metrics.image.tag=1.66.0-debian-12-r2 \
+  --set redis.metrics.image.repository=public/bitnamisecure/redis-exporter \
+  --set redis.metrics.image.tag=1.86.0 \
   --skip-tests \
   --values "${values}" \
   --version "${version}" | yq --no-doc '.. | .image? | select(.)' | sort -u > ${output}
